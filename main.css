@@ -1,0 +1,111 @@
+/*main window*/
+html,body
+{
+	width:100%;
+	height:100%;
+	overflow: hidden;
+	
+}
+
+#main_div
+{	
+	margin:0px;
+	padding:0px; 
+	height:100%;
+	width:100%;
+	border-width:0px;
+}
+
+#buttons_div
+{
+	position:absolute;
+	left:0px;top:0px;
+	margin:4px;
+	padding:3px; 
+	height:710px;
+	width:150px;
+	border: green 3px solid;
+	overflow: auto;
+}
+
+#objects_div
+{
+	position:absolute;
+	left:166px; top:0px; 
+	margin:4px;
+	padding:3px; 
+	height:710px;
+	width:710px;
+	border: green 3px solid;
+	overflow: auto;
+	color:white;
+	font-family:monospace;
+	font-size:15px;
+}
+
+/*drowing general object*/
+.general_object_name
+{
+	position:relative;
+	text-align:center;
+	color:white;
+	font-family:monospace;
+	font-size:25px;
+	font-weight: bold;  
+}
+
+.general_object_group
+{
+	position:relative;
+	background: rgba(255,255,255,0.25);
+	width:90%;
+	padding:3px;
+	margin:10px;
+	font-family:monospace;
+	font-size:15px;
+	font-weight: bold;
+	font-style: italic;  
+}
+
+.general_object_desc
+{
+	position:relative;
+	color:white;
+	font-family:monospace;
+	font-size:15px;
+	font-style: normal;
+	font-weight: normal;  
+}
+
+
+.general_object_button
+{	
+	height:30px;
+	width:20%;
+	margin:3px;
+	font-size:15px;
+	font-style: normal;
+	font-weight: normal;
+}
+
+/**/
+.btntxt
+{
+	position:relative;
+	text-align:center;
+	color:white;
+	font-family:monospace;
+	font-size:15px;
+}
+
+.mybutton
+{
+	position:relative;
+	border:2px solid white;
+	margin: 25px auto;
+	width:50px;
+	height:50px;
+	display:block;
+	background: rgba(255,255,255,0.5);
+	border-radius:5px;
+}
