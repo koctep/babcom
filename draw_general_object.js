@@ -14,25 +14,27 @@ function resizeMainDivs()
 }
 
 
-function draw_general_object(l_data,l_div)
+function draw_general_object(l_object,l_div)
 {
+	$(l_div).empty();
+	
 	var lx=$(l_div).width(),ly=$(l_div).height();
 	
 	var l_used_keys=[];
 	var l_used_actions=[];
 	
-	if ("name" in l_data.object.attributes) 
+	if ("name" in l_object.attributes) 
 	{
-		$(l_div).append("<p class=\"general_object_name\">"+ l_data.object.attributes.name.value+"</p>"); 	
+		$(l_div).append("<p class=\"general_object_name\">"+ l_object.attributes.name.value+"</p>"); 	
 		l_used_keys.push("name");
 	}
 	
 	
 	//отрисовываем заданное в темплейте. Там должно быть перечислено все. 
-	if("template" in l_data.object)
+	if("template" in l_object)
 	{
 		var i=0,j=0;
-		var tmp=l_data.object.template.groups;
+		var tmp=l_object.template.groups;
 		for(i=0;i<tmp.length;i++)
 		{
 			var tmp_group=$("<div class=\"general_object_group\"></div>").text("");
@@ -50,12 +52,12 @@ function draw_general_object(l_data,l_div)
 					var tmp_attr=tmp[i].attributes[j];
 					var tmp_val;
 					
-					if("value_description" in  l_data.object.attributes[tmp_attr] ) tmp_val=l_data.object.attributes[tmp_attr].value_description;
-					else tmp_val=l_data.object.attributes[tmp_attr].value;
+					if("value_description" in  l_object.attributes[tmp_attr] ) tmp_val=l_object.attributes[tmp_attr].value_description;
+					else tmp_val=l_object.attributes[tmp_attr].value;
 					
-					if("name" in  l_data.object.attributes[tmp_attr] )
+					if("name" in  l_object.attributes[tmp_attr] )
 					{
-						$(tmp_group).append("<p class=\"general_object_desc\"><b>"+l_data.object.attributes[tmp_attr].name+"</b> : " +tmp_val +" </p>");
+						$(tmp_group).append("<p class=\"general_object_desc\"><b>"+l_object.attributes[tmp_attr].name+"</b> : " +tmp_val +" </p>");
 					}
 					else
 					{
@@ -72,9 +74,9 @@ function draw_general_object(l_data,l_div)
 				{
 					var tmp_attr=tmp[i].actions[j];
 
-					if("name" in  l_data.object.actions[tmp_attr] )
+					if("name" in  l_object.actions[tmp_attr] )
 					{
-						var tmp_button=$("<button class=\"general_object_button\">"+l_data.object.actions[tmp_attr].name+"</button>");
+						var tmp_button=$("<button class=\"general_object_button\">"+l_object.actions[tmp_attr].name+"</button>");
 						$(tmp_button).click(function(){alert("Pressed!");});
 						$(tmp_group).append(tmp_button);
 					}
@@ -88,7 +90,7 @@ function draw_general_object(l_data,l_div)
 	}		
 	
 	//рисуем атрибуты без темплейта. От таких надо избавляться.
-	var tmp=l_data.object.attributes;
+	var tmp=l_object.attributes;
 	
 	$.each(tmp, function(l_key,l_value)
 	{
@@ -115,7 +117,7 @@ function draw_general_object(l_data,l_div)
 	
 	//рисуем кнопки без темплейта. От таких надо избавляться.
 	
-	var tmp=l_data.object.actions;
+	var tmp=l_object.actions;
 	$.each(tmp, function(l_key,l_value)
 	{
 		if( $.inArray(l_key,l_used_actions) <0)
