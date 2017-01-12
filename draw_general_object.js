@@ -13,6 +13,42 @@ function resizeMainDivs()
 
 }
 
+function draw_general_object_dialog(l_action,l_div)
+{
+	$(l_div).children().hide();
+	
+	//Окно ввода, название и предупреждение:
+	
+	var tmp_div=$("<div class=\"general_object_dialog\"></div>");
+	$(tmp_div).css({"top": $(l_div).scrollTop()+20});
+	$(l_div).append(tmp_div);
+	
+	//параметры ввода
+	
+	
+	
+	
+	
+	
+	//Кнопки подтверждения, отмены.
+	var tmp_button_ok=$("<button class=\"general_object_button_dialog\"> Ok! </button>");
+	$(tmp_button_ok).click(function(){alert('Ok');});
+	
+	var tmp_button_cancel=$("<button class=\"general_object_button_dialog\"> Cancel! </button>");
+	$(tmp_button_cancel).click(function()
+	{
+		$(l_div).children().show();
+		$(tmp_div).remove();
+	});
+	
+	var tmp_container=$("<div class=\"general_object_button_dialog_container\"></div>");
+	
+	$(tmp_container).append(tmp_button_ok);
+	$(tmp_container).append(tmp_button_cancel);
+	$(tmp_div).append(tmp_container);
+	
+}
+
 
 function draw_general_object(l_object,l_div)
 {
@@ -52,19 +88,22 @@ function draw_general_object(l_object,l_div)
 					var tmp_attr=tmp[i].attributes[j];
 					var tmp_val;
 					
-					if("value_description" in  l_object.attributes[tmp_attr] ) tmp_val=l_object.attributes[tmp_attr].value_description;
-					else tmp_val=l_object.attributes[tmp_attr].value;
-					
-					if("name" in  l_object.attributes[tmp_attr] )
+					if(l_object.attributes[tmp_attr].hidden != true)
 					{
-						$(tmp_group).append("<p class=\"general_object_desc\"><b>"+l_object.attributes[tmp_attr].name+"</b> : " +tmp_val +" </p>");
+						if("value_description" in  l_object.attributes[tmp_attr] ) tmp_val=l_object.attributes[tmp_attr].value_description;
+						else tmp_val=l_object.attributes[tmp_attr].value;
+						
+						if("name" in  l_object.attributes[tmp_attr] )
+						{
+							$(tmp_group).append("<p class=\"general_object_desc\"><b>"+l_object.attributes[tmp_attr].name+"</b> : " +tmp_val +" </p>");
+						}
+						else
+						{
+							$(tmp_group).append("<p class=\"general_object_desc\">"+tmp_val +" </p>");
+						}
+						
+						l_used_keys.push(tmp_attr);
 					}
-					else
-					{
-						$(tmp_group).append("<p class=\"general_object_desc\">"+tmp_val +" </p>");
-					}
-					
-					l_used_keys.push(tmp_attr);
 				}
 			}	
 
@@ -77,9 +116,19 @@ function draw_general_object(l_object,l_div)
 					if("name" in  l_object.actions[tmp_attr] )
 					{
 						var tmp_button=$("<button class=\"general_object_button\">"+l_object.actions[tmp_attr].name+"</button>");
-						$(tmp_button).click(function(){alert("Pressed!");});
+						
+						//универсальный обработчик нажатий кнопок
+						$(tmp_button).click(function()
+						{
+							draw_general_object_dialog(l_object.actions[tmp_attr],l_div);
+						});
+
+						if(l_object.actions[tmp_attr].disabled==true) $(tmp_button).attr("disabled","disabled");  
+
 						$(tmp_group).append(tmp_button);
+
 					}
+
 					
 					l_used_actions.push(tmp_attr);
 				}

@@ -67,6 +67,24 @@ html,body
 	font-style: italic;  
 }
 
+.general_object_dialog
+{
+	position:absolute;
+	background: rgba(10,10,10,1);
+	width:80%;
+	height:80%;
+	top: 10%;
+	left: 10%;
+	padding:3px;
+	margin:10px;
+	border: green 2px solid;
+	font-family:monospace;
+	font-size:15px;
+	font-weight: bold;
+	font-style: italic;  
+}
+
+
 .general_object_desc
 {
 	position:relative;
@@ -86,6 +104,27 @@ html,body
 	font-size:15px;
 	font-style: normal;
 	font-weight: normal;
+}
+
+.general_object_button_dialog
+{	
+	position: relative;
+	height:30px;
+	width:100px;
+	margin:5px 5px;
+	font-size:15px;
+	font-style: normal;
+	font-weight: normal;
+	
+}
+
+.general_object_button_dialog_container
+{	
+	width: 300px;
+	position: relative;
+	margin: 20px auto;
+	display: block;
+	text-align: center; 
 }
 
 /**/
