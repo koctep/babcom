@@ -97,14 +97,14 @@ var tmp_obj={
 								"max_value_count": 5
 							},
 							{
-								"code": "value1",
-								"type": "integer",
+								"code": "value_float",
+								"type": "float",
 								"data": {
-									"min_value": 300,
-									"max_value": 900
+									"min_value": 299.56,
+									"max_value": 900.23
 								},
 								"description": "111Введите желаемую длину волны (300–900 нм.)",
-								"default_value": 635,
+								"default_value": 635.33,
 								"min_value_count": 1,
 								"max_value_count": 1
 							}

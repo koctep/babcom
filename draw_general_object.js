@@ -13,6 +13,50 @@ function resizeMainDivs()
 
 }
 
+function draw_general_object_dialog_params_float(l_par,l_data,l_div,l_num)
+{
+		var tmp_input=$("<input type=\"text\" class=\"general_object_dialog_input\"></input>");
+		$(tmp_input).attr("placeholder","default val: " + l_par.default_value);
+		$(tmp_input).data("data_input",l_data);
+		$(tmp_input).data("user_parameter",l_par);
+		$(tmp_input).data("num",l_num);
+
+		$(tmp_input).change(function(event)
+		{
+			var tmp=parseFloat($(event.target).val());
+			var tmp_par=$(event.target).data("user_parameter");
+			var tmp_data=$(event.target).data("data_input");
+			var tmp_num=$(event.target).data("num");
+
+			if(isNaN(tmp)==false)
+			{
+				if("data" in tmp_par)
+				{
+					if(tmp >=tmp_par.data.min_value && tmp <= tmp_par.data.max_value ) 
+					{
+						tmp_data[tmp_par.code][tmp_num]=tmp;
+						$(event.target).css({"border-color":"green"});	
+					}	
+					else
+					{
+						$(event.target).css({"border-color":"red"});	
+					}	
+				}
+				else
+				{
+					tmp_data[tmp_par.code][tmp_num]=tmp;
+					$(event.target).css({"border-color":"green"});	
+				}
+			}
+			else
+			{
+				$(event.target).css({"border-color":"red"});
+				$(event.target).val("");
+			}
+		});	
+		$(l_div).append(tmp_input);
+}
+
 function draw_general_object_dialog_params_integer(l_par,l_data,l_div,l_num)
 {
 		var tmp_input=$("<input type=\"text\" class=\"general_object_dialog_input\"></input>");
@@ -77,6 +121,7 @@ function draw_general_object_dialog_params(l_par,l_par_div)
 	{
 		$(l_par_div).data("data_input")[l_par.code][i]=null;
 		if(l_par.type==="integer") draw_general_object_dialog_params_integer(l_par,	$(l_par_div).data("data_input"),tmp_group,i);
+		if(l_par.type==="float") draw_general_object_dialog_params_float(l_par,	$(l_par_div).data("data_input"),tmp_group,i);
 	
 /*		if(l_par.type=="string") draw_general_object_dialog_params_string(l_par,tmp_group);
 		if(l_par.type=="object") draw_general_object_dialog_params_object(l_par,tmp_group);
@@ -111,6 +156,8 @@ function draw_general_object_dialog_params(l_par,l_par_div)
 
 			tmp_count[tmp_par.code]=tmp+1;
 			if(tmp_par.type==="integer") draw_general_object_dialog_params_integer(tmp_par,	tmp_data,tmp_div,tmp);
+			if(tmp_par.type==="float") draw_general_object_dialog_params_float(tmp_par,	tmp_data,tmp_div,tmp);
+
 			if(tmp+1==tmp_par.max_value_count) $(event.target).attr("disabled","disabled");
 		}
 		else $(event.target).attr("disabled","disabled");
