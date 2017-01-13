@@ -161,7 +161,7 @@ function draw_general_object_dialog(l_event,l_div)
 	var tmp_button_ok=$("<button class=\"general_object_button_dialog\"> Ok! </button>");
 	$(tmp_button_ok).data("action",l_action);
 	$(tmp_button_ok).data("data",tmp_div);
-	$(tmp_button_ok).data("general_object_code",$(event.target).data("general_object_code"));
+	$(tmp_button_ok).data("general_object_code",$(l_event.target).data("general_object_code"));
 
 	$(tmp_button_ok).click(function(event)
 	{
