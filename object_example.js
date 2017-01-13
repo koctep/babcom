@@ -107,6 +107,19 @@ var tmp_obj={
 								"default_value": 635.33,
 								"min_value_count": 1,
 								"max_value_count": 1
+							},
+							{
+								"code": "value_string",
+								"type": "string",
+								"data": {
+									"min_length": 50,
+									"max_length": 60,
+									"multiline": true
+								},
+								"description": "Введите краткое эссе на тему как я готовился к игре. Не менее 50 символов",
+								"default_value": "Знаете, это было не просто. В начале нам казалось, что все это нафиг никому не нужно. Но позже, когда стали поступать деньги... ",
+								"min_value_count": 1,
+								"max_value_count": 1
 							}
 						]
 					},

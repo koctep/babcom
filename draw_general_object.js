@@ -13,92 +13,162 @@ function resizeMainDivs()
 
 }
 
-function draw_general_object_dialog_params_float(l_par,l_data,l_div,l_num)
+function general_object_dialog_input_string_callback(event)
 {
-		var tmp_input=$("<input type=\"text\" class=\"general_object_dialog_input\"></input>");
-		$(tmp_input).attr("placeholder","default val: " + l_par.default_value);
+	var tmp=$(event.target).val();
+	var tmp_par=$(event.target).data("user_parameter");
+	var tmp_data=$(event.target).data("data_input");
+	var tmp_num=$(event.target).data("num");
+
+	if("data" in tmp_par)
+	{
+		if(tmp.length >=tmp_par.data.min_length) 
+		{
+			tmp_data[tmp_par.code][tmp_num]=tmp;
+			$(event.target).css({"border-color":"green"});	
+		}	
+		else
+		{
+			$(event.target).css({"border-color":"red"});	
+		}	
+	}
+	else
+	{
+		tmp_data[tmp_par.code][tmp_num]=tmp;
+		$(event.target).css({"border-color":"green"});	
+	}	
+}
+
+function draw_general_object_dialog_params_string(l_par,l_data,l_div,l_num)
+{
+		var tmp_input;
+		
+		if(l_par.data.multiline==true)
+		{
+			tmp_input=$("<textarea type=\"text\" class=\"general_object_dialog_textarea\"></textarea>");
+			$(tmp_input).attr("rows",10);
+		}
+		else tmp_input=$("<input type=\"text\" class=\"general_object_dialog_textarea\"></input>");
+
+		$(tmp_input).val(l_par.default_value);
+		if(l_par.data.max_length != undefined ) 
+		{
+			$(tmp_input).attr("maxlength",l_par.data.max_length);
+			$(tmp_input).val(l_par.default_value.substring(0,l_par.data.max_length));
+			
+		}
+		
 		$(tmp_input).data("data_input",l_data);
 		$(tmp_input).data("user_parameter",l_par);
-		$(tmp_input).data("num",l_num);
+		$(tmp_input).data("num",l_num); 
 
 		$(tmp_input).change(function(event)
 		{
-			var tmp=parseFloat($(event.target).val());
-			var tmp_par=$(event.target).data("user_parameter");
-			var tmp_data=$(event.target).data("data_input");
-			var tmp_num=$(event.target).data("num");
+			general_object_dialog_input_string_callback(event);
+		});	
+		
+		$(l_div).append(tmp_input);
+		$(tmp_input).trigger("change");
+}
 
-			if(isNaN(tmp)==false)
+function general_object_dialog_input_float_callback(event)
+{
+	var tmp=parseFloat($(event.target).val());
+	var tmp_par=$(event.target).data("user_parameter");
+	var tmp_data=$(event.target).data("data_input");
+	var tmp_num=$(event.target).data("num");
+
+	if(isNaN(tmp)==false)
+	{
+		if("data" in tmp_par)
+		{
+			if(tmp >=tmp_par.data.min_value && tmp <= tmp_par.data.max_value ) 
 			{
-				if("data" in tmp_par)
-				{
-					if(tmp >=tmp_par.data.min_value && tmp <= tmp_par.data.max_value ) 
-					{
-						tmp_data[tmp_par.code][tmp_num]=tmp;
-						$(event.target).css({"border-color":"green"});	
-					}	
-					else
-					{
-						$(event.target).css({"border-color":"red"});	
-					}	
-				}
-				else
-				{
-					tmp_data[tmp_par.code][tmp_num]=tmp;
-					$(event.target).css({"border-color":"green"});	
-				}
-			}
+				tmp_data[tmp_par.code][tmp_num]=tmp;
+				$(event.target).css({"border-color":"green"});	
+			}	
 			else
 			{
-				$(event.target).css({"border-color":"red"});
-				$(event.target).val("");
-			}
-		});	
-		$(l_div).append(tmp_input);
+				$(event.target).css({"border-color":"red"});	
+			}	
+		}
+		else
+		{
+			tmp_data[tmp_par.code][tmp_num]=tmp;
+			$(event.target).css({"border-color":"green"});	
+		}
+	}
+	else
+	{
+		$(event.target).css({"border-color":"red"});
+		$(event.target).val("");
+	}
+}
+
+function draw_general_object_dialog_params_float(l_par,l_data,l_div,l_num)
+{
+	var tmp_input=$("<input type=\"text\" class=\"general_object_dialog_input\"></input>");
+	$(tmp_input).attr("value",l_par.default_value);
+	$(tmp_input).data("data_input",l_data);
+	$(tmp_input).data("user_parameter",l_par);
+	$(tmp_input).data("num",l_num);
+
+	$(tmp_input).change(function(event)
+	{
+		general_object_dialog_input_float_callback(event);
+	});	
+	$(l_div).append(tmp_input);
+	$(tmp_input).trigger("change");
+}
+
+function general_object_dialog_input_integer_callback(event)
+{
+	var tmp=parseInt($(event.target).val());
+	var tmp_par=$(event.target).data("user_parameter");
+	var tmp_data=$(event.target).data("data_input");
+	var tmp_num=$(event.target).data("num");
+
+	if(isNaN(tmp)==false)
+	{
+		if("data" in tmp_par)
+		{
+			if(tmp >=tmp_par.data.min_value && tmp <= tmp_par.data.max_value ) 
+			{
+				tmp_data[tmp_par.code][tmp_num]=tmp;
+				$(event.target).css({"border-color":"green"});	
+			}	
+			else
+			{
+				$(event.target).css({"border-color":"red"});	
+			}	
+		}
+		else
+		{
+			tmp_data[tmp_par.code][tmp_num]=tmp;
+			$(event.target).css({"border-color":"green"});	
+		}
+	}
+	else
+	{
+		$(event.target).css({"border-color":"red"});
+		$(event.target).val("");
+	}
 }
 
 function draw_general_object_dialog_params_integer(l_par,l_data,l_div,l_num)
 {
-		var tmp_input=$("<input type=\"text\" class=\"general_object_dialog_input\"></input>");
-		$(tmp_input).attr("placeholder","default val: " + l_par.default_value);
-		$(tmp_input).data("data_input",l_data);
-		$(tmp_input).data("user_parameter",l_par);
-		$(tmp_input).data("num",l_num);
+	var tmp_input=$("<input type=\"text\" class=\"general_object_dialog_input\"></input>");
+	$(tmp_input).attr("value",l_par.default_value);
+	$(tmp_input).data("data_input",l_data);
+	$(tmp_input).data("user_parameter",l_par);
+	$(tmp_input).data("num",l_num);
 
-		$(tmp_input).change(function(event)
-		{
-			var tmp=parseInt($(event.target).val());
-			var tmp_par=$(event.target).data("user_parameter");
-			var tmp_data=$(event.target).data("data_input");
-			var tmp_num=$(event.target).data("num");
-
-			if(isNaN(tmp)==false)
-			{
-				if("data" in tmp_par)
-				{
-					if(tmp >=tmp_par.data.min_value && tmp <= tmp_par.data.max_value ) 
-					{
-						tmp_data[tmp_par.code][tmp_num]=tmp;
-						$(event.target).css({"border-color":"green"});	
-					}	
-					else
-					{
-						$(event.target).css({"border-color":"red"});	
-					}	
-				}
-				else
-				{
-					tmp_data[tmp_par.code][tmp_num]=tmp;
-					$(event.target).css({"border-color":"green"});	
-				}
-			}
-			else
-			{
-				$(event.target).css({"border-color":"red"});
-				$(event.target).val("");
-			}
-		});	
-		$(l_div).append(tmp_input);
+	$(tmp_input).change(function(event)
+	{
+		general_object_dialog_input_integer_callback(event);
+	});	
+	$(l_div).append(tmp_input);
+	$(tmp_input).trigger("change");
 }
 
 function draw_general_object_dialog_params(l_par,l_par_div)
@@ -122,6 +192,7 @@ function draw_general_object_dialog_params(l_par,l_par_div)
 		$(l_par_div).data("data_input")[l_par.code][i]=null;
 		if(l_par.type==="integer") draw_general_object_dialog_params_integer(l_par,	$(l_par_div).data("data_input"),tmp_group,i);
 		if(l_par.type==="float") draw_general_object_dialog_params_float(l_par,	$(l_par_div).data("data_input"),tmp_group,i);
+		if(l_par.type==="string") draw_general_object_dialog_params_string(l_par, $(l_par_div).data("data_input"),tmp_group,i);
 	
 /*		if(l_par.type=="string") draw_general_object_dialog_params_string(l_par,tmp_group);
 		if(l_par.type=="object") draw_general_object_dialog_params_object(l_par,tmp_group);
@@ -157,6 +228,7 @@ function draw_general_object_dialog_params(l_par,l_par_div)
 			tmp_count[tmp_par.code]=tmp+1;
 			if(tmp_par.type==="integer") draw_general_object_dialog_params_integer(tmp_par,	tmp_data,tmp_div,tmp);
 			if(tmp_par.type==="float") draw_general_object_dialog_params_float(tmp_par,	tmp_data,tmp_div,tmp);
+			if(tmp_par.type==="string") draw_general_object_dialog_params_string(tmp_par, tmp_data,tmp_div,tmp);
 
 			if(tmp+1==tmp_par.max_value_count) $(event.target).attr("disabled","disabled");
 		}
