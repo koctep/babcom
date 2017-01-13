@@ -67,6 +67,17 @@ html,body
 	font-style: italic;  
 }
 
+
+.general_object_dialog_warning
+{
+	position:relative;
+	text-align:center;
+	color:red;
+	font-family:monospace;
+	font-size:25px;
+	font-weight: bold;  
+}
+
 .general_object_dialog
 {
 	position:absolute;
@@ -82,6 +93,8 @@ html,body
 	font-size:15px;
 	font-weight: bold;
 	font-style: italic;  
+	overflow: auto;
+
 }
 
 
@@ -115,6 +128,33 @@ html,body
 	font-size:15px;
 	font-style: normal;
 	font-weight: normal;
+	
+}
+
+.general_object_plus_button_dialog
+{	
+	position: relative;
+	height:30px;
+	width:30px;
+	margin:5px 5px;
+	font-size:15px;
+	font-style: normal;
+	font-weight: normal;
+	
+}
+
+.general_object_dialog_input
+{	
+	position: relative;
+	height:30px;
+	width:200px;
+	margin:5px 5px;
+	font-size:15px;
+	font-style: normal;
+	font-weight: normal;
+	border: grey 3px solid;
+	display: block;
+
 	
 }
 

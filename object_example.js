@@ -93,6 +93,18 @@ var tmp_obj={
 								},
 								"description": "Введите желаемую длину волны (300–900 нм.)",
 								"default_value": 635,
+								"min_value_count": 2,
+								"max_value_count": 5
+							},
+							{
+								"code": "value1",
+								"type": "integer",
+								"data": {
+									"min_value": 300,
+									"max_value": 900
+								},
+								"description": "111Введите желаемую длину волны (300–900 нм.)",
+								"default_value": 635,
 								"min_value_count": 1,
 								"max_value_count": 1
 							}
