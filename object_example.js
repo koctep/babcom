@@ -92,7 +92,7 @@ var tmp_obj={
 									"max_value": 900
 								},
 								"description": "Введите желаемую длину волны (300–900 нм.)",
-								"default_value": 635,
+								"default_value": [635,334,335,444],
 								"min_value_count": 2,
 								"max_value_count": 5
 							},
@@ -104,12 +104,25 @@ var tmp_obj={
 									"max_value": 900.23
 								},
 								"description": "111Введите желаемую длину волны (300–900 нм.)",
-								"default_value": 635.33,
-								"min_value_count": 1,
-								"max_value_count": 1
+								"default_value": [635.33,555.1,442.2,332.1],
+								"min_value_count": 3,
+								"max_value_count": 7
 							},
 							{
-								"code": "value_string",
+								"code": "value_singlestring",
+								"type": "string",
+								"data": {
+									"min_length": 50,
+									"max_length": 70,
+									"multiline": false
+								},
+								"description": "Введите краткое эссе на тему как я готовился к игре. Не менее 50 символов",
+								"default_value": "Знаете, это было не просто. В начале нам казалось, что все это нафиг никому не нужно. Но позже, когда стали поступать деньги... ",
+								"min_value_count": 1,
+								"max_value_count": 3
+							},
+							{
+								"code": "multi_string",
 								"type": "string",
 								"data": {
 									"min_length": 50,
@@ -119,7 +132,7 @@ var tmp_obj={
 								"description": "Введите краткое эссе на тему как я готовился к игре. Не менее 50 символов",
 								"default_value": "Знаете, это было не просто. В начале нам казалось, что все это нафиг никому не нужно. Но позже, когда стали поступать деньги... ",
 								"min_value_count": 1,
-								"max_value_count": 1
+								"max_value_count": 3
 							}
 						]
 					},

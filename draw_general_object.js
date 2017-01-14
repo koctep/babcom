@@ -3,14 +3,29 @@
 //подгоняем под размер окна
 function resizeMainDivs()
 {
-	
 	var main_x = $("#main_div").width(); //window.innerWidth;
 	var main_y = $("#main_div").height(); //window.innerHeight;
 
 	//задаем размеры
 	$("#buttons_div").css({"height":main_y-20});
 	$("#objects_div").css({"width": main_x-186,"height":main_y-20});
+}
 
+//закрыватель всех окошечек с вводом. 
+function general_object_dialog_input_del_button_callback(event)
+{
+	var tmp_par=$(event.target).data("user_parameter");
+	var tmp_data=$(event.target).data("data_input");
+	var tmp_num=$(event.target).data("num");
+	var tmp_count=$(event.target).data("data_count");
+	var tmp_button_plus=$(event.target).data("plus_button");
+
+	var tmp_arr=tmp_data[tmp_par.code];
+	tmp_arr.splice(tmp_num,1);	
+	tmp_count[tmp_par.code]--;
+	
+	$(event.target).parent().remove();
+	$(tmp_button_plus).attr("disabled",false);
 }
 
 function general_object_dialog_input_string_callback(event)
@@ -19,7 +34,14 @@ function general_object_dialog_input_string_callback(event)
 	var tmp_par=$(event.target).data("user_parameter");
 	var tmp_data=$(event.target).data("data_input");
 	var tmp_num=$(event.target).data("num");
-
+	
+	//если все стереть, то вернется дефолтное значение
+	if(tmp.length==0) 
+	{
+		tmp=$(event.target).data("default");
+		$(event.target).val(tmp);
+	}
+	
 	if("data" in tmp_par)
 	{
 		if(tmp.length >=tmp_par.data.min_length) 
@@ -29,6 +51,7 @@ function general_object_dialog_input_string_callback(event)
 		}	
 		else
 		{
+			tmp_data[tmp_par.code][tmp_num]=null;
 			$(event.target).css({"border-color":"red"});	
 		}	
 	}
@@ -37,38 +60,96 @@ function general_object_dialog_input_string_callback(event)
 		tmp_data[tmp_par.code][tmp_num]=tmp;
 		$(event.target).css({"border-color":"green"});	
 	}	
+	
+
+	
 }
 
-function draw_general_object_dialog_params_string(l_par,l_data,l_div,l_num)
+function draw_general_object_dialog_params_string(l_par,l_data_div,l_div,l_num)
 {
-		var tmp_input;
-		
-		if(l_par.data.multiline==true)
-		{
-			tmp_input=$("<textarea type=\"text\" class=\"general_object_dialog_textarea\"></textarea>");
-			$(tmp_input).attr("rows",10);
-		}
-		else tmp_input=$("<input type=\"text\" class=\"general_object_dialog_textarea\"></input>");
-
-		$(tmp_input).val(l_par.default_value);
-		if(l_par.data.max_length != undefined ) 
-		{
-			$(tmp_input).attr("maxlength",l_par.data.max_length);
-			$(tmp_input).val(l_par.default_value.substring(0,l_par.data.max_length));
+	var l_data=$(l_data_div).data("data_input");
+	var l_count=$(l_data_div).data("data_count");
+	var l_plus=$(l_div).data("plus_button");
 			
-		}
+	var tmp_cont;
+	var tmp_input;
+	
+	//если мултилайн окно ввода - контейнер широкий, если нет - узкий.  
+	if(l_par.data.multiline==true)
+	{
+		tmp_cont=$("<div class=\"general_object_dialog_input_cont_multiline\"></div>");
+		tmp_input=$("<textarea type=\"text\" class=\"general_object_dialog_textarea\"></textarea>");
+		$(tmp_input).attr("rows",10);
+	}
+	else 
+	{
+		tmp_cont=$("<div class=\"general_object_dialog_input_cont_singleline\"></div>");
+		tmp_input=$("<input type=\"text\" class=\"general_object_dialog_textarea\"></input>");
+	}
+	
+	//если диалог обязательный, то зеленая точка, если нет, то крестик. 
+	if(l_num<l_par.min_value_count)
+	{
+		 $(tmp_cont).append("<div class=\"general_object_dialog_input_dot\">●</div>"); 
+	}
+	else 
+	{
+		var tmp_del_button=$("<div class=\"general_object_dialog_input_del_button\">×</div>"); 
 		
-		$(tmp_input).data("data_input",l_data);
-		$(tmp_input).data("user_parameter",l_par);
-		$(tmp_input).data("num",l_num); 
+		$(tmp_del_button).data("data_input",l_data);
+		$(tmp_del_button).data("user_parameter",l_par);
+		$(tmp_del_button).data("num",l_num); 
+		$(tmp_del_button).data("data_count",l_count);
+		$(tmp_del_button).data("plus_button",l_plus);		 
 
-		$(tmp_input).change(function(event)
+
+		$(tmp_cont).append(tmp_del_button); 
+			//закрыватель всех окошечек с вводом. 
+		$(tmp_del_button).click(function(event){general_object_dialog_input_del_button_callback(event);});
+	
+	}
+
+	//заполняем дефолтные значения
+	var tmp_default;
+	if($.isArray(l_par.default_value)==true)
+	{ 
+		if(l_num<l_par.default_value.length)
 		{
-			general_object_dialog_input_string_callback(event);
-		});	
-		
-		$(l_div).append(tmp_input);
-		$(tmp_input).trigger("change");
+			tmp_default=l_par.default_value[l_num]; 
+		}
+		else tmp_default=""; 		
+	}	
+	else 
+	{
+		if(l_num==0)
+		{
+			tmp_default=l_par.default_value; 
+		}
+		else tmp_default=""; 
+	}
+	
+	//максимальная длина вводимой строки. 	
+	if(l_par.data.max_length != undefined ) 
+	{
+		$(tmp_input).attr("maxlength",l_par.data.max_length);
+		tmp_default=tmp_default.substring(0,l_par.data.max_length);	
+	}
+	$(tmp_input).data("default",tmp_default);
+	$(tmp_input).val(tmp_default);
+			
+	//данные для обработки инпута
+	$(tmp_input).data("data_input",l_data);
+	$(tmp_input).data("user_parameter",l_par);
+	$(tmp_input).data("num",l_num); 
+
+	$(tmp_input).change(function(event)
+	{
+		general_object_dialog_input_string_callback(event);
+	});	
+	
+	$(tmp_cont).append(tmp_input);
+	$(l_div).append(tmp_cont);
+	$(tmp_input).trigger("change");
 }
 
 function general_object_dialog_input_float_callback(event)
@@ -77,7 +158,9 @@ function general_object_dialog_input_float_callback(event)
 	var tmp_par=$(event.target).data("user_parameter");
 	var tmp_data=$(event.target).data("data_input");
 	var tmp_num=$(event.target).data("num");
-
+	
+//	alert("length: " + tmp.length + "\nPar: " + JSON.stringify(tmp_par) +"\n Data: " + JSON.stringify(tmp_data) + "\n Num: " +tmp_num );
+	
 	if(isNaN(tmp)==false)
 	{
 		if("data" in tmp_par)
@@ -89,6 +172,7 @@ function general_object_dialog_input_float_callback(event)
 			}	
 			else
 			{
+				tmp_data[tmp_par.code][tmp_num]=null;
 				$(event.target).css({"border-color":"red"});	
 			}	
 		}
@@ -97,27 +181,77 @@ function general_object_dialog_input_float_callback(event)
 			tmp_data[tmp_par.code][tmp_num]=tmp;
 			$(event.target).css({"border-color":"green"});	
 		}
+		$(event.target).val(tmp);
 	}
 	else
 	{
-		$(event.target).css({"border-color":"red"});
-		$(event.target).val("");
+		//если все стереть, то вернется дефолтное значение
+		tmp=$(event.target).data("default");
+		$(event.target).css({"border-color":"green"});
+		$(event.target).val(tmp);
 	}
 }
 
-function draw_general_object_dialog_params_float(l_par,l_data,l_div,l_num)
+function draw_general_object_dialog_params_float(l_par,l_data_div,l_div,l_num)
 {
+	var l_data=$(l_data_div).data("data_input");
+	var l_count=$(l_data_div).data("data_count");
+	var l_plus=$(l_div).data("plus_button");
+	
+	var tmp_cont=$("<div class=\"general_object_dialog_input_cont_singleline\"></div>");
 	var tmp_input=$("<input type=\"text\" class=\"general_object_dialog_input\"></input>");
-	$(tmp_input).attr("value",l_par.default_value);
+			
+	//если диалог обязательный, то зеленая точка, если нет, то крестик. 
+	if(l_num<l_par.min_value_count) $(tmp_cont).append("<div class=\"general_object_dialog_input_dot\">●</div>"); 
+	else
+	{
+		var tmp_del_button=$("<div class=\"general_object_dialog_input_del_button\">×</div>"); 
+		
+		$(tmp_del_button).data("data_input",l_data);
+		$(tmp_del_button).data("user_parameter",l_par);
+		$(tmp_del_button).data("num",l_num); 
+		$(tmp_del_button).data("data_count",l_count);
+		$(tmp_del_button).data("plus_button",l_plus);		 
+
+
+		$(tmp_cont).append(tmp_del_button); 
+			//закрыватель всех окошечек с вводом. 
+		$(tmp_del_button).click(function(event){general_object_dialog_input_del_button_callback(event);});
+	}
+	
+	//заполняем дефолтные значения
+	var tmp_default;
+	if($.isArray(l_par.default_value)==true)
+	{ 
+		if(l_num<l_par.default_value.length)
+			{
+				tmp_default=l_par.default_value[l_num]; 
+			}
+			else tmp_default=""; 		
+	}	
+	else 
+	{
+		if(l_num==0)
+		{
+			tmp_default=l_par.default_value; 
+		}
+		else tmp_default=""; 
+	}
+	
+	$(tmp_input).data("default",tmp_default);
+	$(tmp_input).val(tmp_default);
+	
 	$(tmp_input).data("data_input",l_data);
 	$(tmp_input).data("user_parameter",l_par);
 	$(tmp_input).data("num",l_num);
-
+	
 	$(tmp_input).change(function(event)
 	{
 		general_object_dialog_input_float_callback(event);
 	});	
-	$(l_div).append(tmp_input);
+	
+	$(tmp_cont).append(tmp_input);
+	$(l_div).append(tmp_cont);
 	$(tmp_input).trigger("change");
 }
 
@@ -127,7 +261,7 @@ function general_object_dialog_input_integer_callback(event)
 	var tmp_par=$(event.target).data("user_parameter");
 	var tmp_data=$(event.target).data("data_input");
 	var tmp_num=$(event.target).data("num");
-
+	
 	if(isNaN(tmp)==false)
 	{
 		if("data" in tmp_par)
@@ -139,6 +273,7 @@ function general_object_dialog_input_integer_callback(event)
 			}	
 			else
 			{
+				tmp_data[tmp_par.code][tmp_num]=null;
 				$(event.target).css({"border-color":"red"});	
 			}	
 		}
@@ -147,27 +282,76 @@ function general_object_dialog_input_integer_callback(event)
 			tmp_data[tmp_par.code][tmp_num]=tmp;
 			$(event.target).css({"border-color":"green"});	
 		}
+		$(event.target).val(tmp);
 	}
 	else
 	{
-		$(event.target).css({"border-color":"red"});
-		$(event.target).val("");
+		//если все стереть, то вернется дефолтное значение
+		tmp=$(event.target).data("default");
+		$(event.target).css({"border-color":"green"});
+		$(event.target).val(tmp);
 	}
 }
 
-function draw_general_object_dialog_params_integer(l_par,l_data,l_div,l_num)
+function draw_general_object_dialog_params_integer(l_par,l_data_div,l_div,l_num)
 {
+	var l_data=$(l_data_div).data("data_input");
+	var l_count=$(l_data_div).data("data_count");
+	var l_plus=$(l_div).data("plus_button");
+
+	var tmp_cont=$("<div class=\"general_object_dialog_input_cont_singleline\"></div>");
 	var tmp_input=$("<input type=\"text\" class=\"general_object_dialog_input\"></input>");
-	$(tmp_input).attr("value",l_par.default_value);
+			
+			
+	//если диалог обязательный, то зеленая точка, если нет, то крестик. 
+	if(l_num<l_par.min_value_count) $(tmp_cont).append("<div class=\"general_object_dialog_input_dot\">●</div>"); 
+	else 
+	{
+		var tmp_del_button=$("<div class=\"general_object_dialog_input_del_button\">×</div>"); 
+		
+		$(tmp_del_button).data("data_input",l_data);
+		$(tmp_del_button).data("user_parameter",l_par);
+		$(tmp_del_button).data("num",l_num);
+		$(tmp_del_button).data("data_count",l_count);		 
+		$(tmp_del_button).data("plus_button",l_plus);		 
+
+		$(tmp_cont).append(tmp_del_button); 
+		$(tmp_del_button).click(function(event){general_object_dialog_input_del_button_callback(event);});
+	}
+	
+	//заполняем дефолтные значения
+	var tmp_default;
+	if($.isArray(l_par.default_value)==true)
+	{ 
+		if(l_num<l_par.default_value.length)
+			{
+				tmp_default=l_par.default_value[l_num]; 
+			}
+			else tmp_default=""; 		
+	}	
+	else 
+	{
+		if(l_num==0)
+		{
+			tmp_default=l_par.default_value; 
+		}
+		else tmp_default=""; 
+	}
+	
+	$(tmp_input).data("default",tmp_default);
+	$(tmp_input).val(tmp_default);
+	
 	$(tmp_input).data("data_input",l_data);
 	$(tmp_input).data("user_parameter",l_par);
 	$(tmp_input).data("num",l_num);
-
+	
 	$(tmp_input).change(function(event)
 	{
 		general_object_dialog_input_integer_callback(event);
 	});	
-	$(l_div).append(tmp_input);
+	
+	$(tmp_cont).append(tmp_input);
+	$(l_div).append(tmp_cont);
 	$(tmp_input).trigger("change");
 }
 
@@ -185,14 +369,17 @@ function draw_general_object_dialog_params(l_par,l_par_div)
 	if(l_par.min_value_count==0) l_count=1; 
 	else l_count=l_par.min_value_count;
 	
+	if($.isArray(l_par.default_value)==true && l_par.default_value.length > l_count ) l_count=l_par.default_value.length;  
+	$(l_par_div).data("data_count")[l_par.code]=l_count;
+	
 	//рисуем окошечки для вводимых параметров
 	var i=0;
 	for(i=0;i<l_count;i++)
 	{
 		$(l_par_div).data("data_input")[l_par.code][i]=null;
-		if(l_par.type==="integer") draw_general_object_dialog_params_integer(l_par,	$(l_par_div).data("data_input"),tmp_group,i);
-		if(l_par.type==="float") draw_general_object_dialog_params_float(l_par,	$(l_par_div).data("data_input"),tmp_group,i);
-		if(l_par.type==="string") draw_general_object_dialog_params_string(l_par, $(l_par_div).data("data_input"),tmp_group,i);
+		if(l_par.type==="integer") draw_general_object_dialog_params_integer(l_par,	l_par_div,tmp_group,i);
+		if(l_par.type==="float") draw_general_object_dialog_params_float(l_par,	l_par_div,tmp_group,i);
+		if(l_par.type==="string") draw_general_object_dialog_params_string(l_par, l_par_div,tmp_group,i);
 	
 /*		if(l_par.type=="string") draw_general_object_dialog_params_string(l_par,tmp_group);
 		if(l_par.type=="object") draw_general_object_dialog_params_object(l_par,tmp_group);
@@ -201,22 +388,22 @@ function draw_general_object_dialog_params(l_par,l_par_div)
 	
 	//кнопочка добавления окошечек параметров. 
 	var tmp_button_plus=$("<button class=\"general_object_plus_button_dialog\">+</button>");
-	$(l_par_div).data("data_count")[l_par.code]=l_count;
-	$(tmp_button_plus).data("data_count",$(l_par_div).data("data_count"));
+
+	$(tmp_button_plus).data("data_div",l_par_div);
 	$(tmp_button_plus).data("user_parameter",l_par);
-	$(tmp_button_plus).data("data_input",$(l_par_div).data("data_input"));
 	$(tmp_button_plus).data("container",tmp_group);
+	$(tmp_group).data("plus_button",tmp_button_plus);
+	
 	
 	if(l_count>=l_par.max_value_count) $(tmp_button_plus).attr("disabled","disabled");
-	
 	$(tmp_group).append(tmp_button_plus);
-	
 	
 	$(tmp_button_plus).click(function(event)
 	{
+		var tmp_data_div=$(event.target).data("data_div");
 		var tmp_par=$(event.target).data("user_parameter");
-		var tmp_count=$(event.target).data("data_count");
-		var tmp_data=$(event.target).data("data_input");
+		var tmp_count=$(tmp_data_div).data("data_count");
+		var tmp_data=$(tmp_data_div).data("data_input");
 		var tmp_div=$(event.target).data("container");
 		
 		var tmp=tmp_count[tmp_par.code];
@@ -226,11 +413,11 @@ function draw_general_object_dialog_params(l_par,l_par_div)
 			tmp_data[tmp_par.code][tmp]=null;
 
 			tmp_count[tmp_par.code]=tmp+1;
-			if(tmp_par.type==="integer") draw_general_object_dialog_params_integer(tmp_par,	tmp_data,tmp_div,tmp);
-			if(tmp_par.type==="float") draw_general_object_dialog_params_float(tmp_par,	tmp_data,tmp_div,tmp);
-			if(tmp_par.type==="string") draw_general_object_dialog_params_string(tmp_par, tmp_data,tmp_div,tmp);
+			if(tmp_par.type==="integer") draw_general_object_dialog_params_integer(tmp_par,tmp_data_div,tmp_div,tmp);
+			if(tmp_par.type==="float") draw_general_object_dialog_params_float(tmp_par,tmp_data_div,tmp_div,tmp);
+			if(tmp_par.type==="string") draw_general_object_dialog_params_string(tmp_par,tmp_data_div,tmp_div,tmp);
 
-			if(tmp+1==tmp_par.max_value_count) $(event.target).attr("disabled","disabled");
+			if(tmp+1==tmp_par.max_value_count) $(event.target).attr("disabled",true);
 		}
 		else $(event.target).attr("disabled","disabled");
 		
@@ -268,14 +455,13 @@ function draw_general_object_dialog(l_event,l_div)
 		$(tmp_div).data("data_input",{});
 		$(tmp_div).data("data_count",{});
 
-		
 		var i=0;
 		for(i=0;i<l_action.user_params.length;i++)
 		{
 			draw_general_object_dialog_params(l_action.user_params[i],tmp_div);
 		}
 	}	
-
+	
 	//Кнопки подтверждения, отмены.
 	var tmp_button_ok=$("<button class=\"general_object_button_dialog\"> Ok! </button>");
 	$(tmp_button_ok).data("action",l_action);
