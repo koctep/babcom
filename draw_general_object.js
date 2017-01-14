@@ -506,9 +506,8 @@ function draw_general_object_dialog(l_event,l_div)
 				}
 			}
 			
-			alert(JSON.stringify(tmp_send));
 		}		
-		
+		alert(JSON.stringify(tmp_send));		
 	});
 	
 	
@@ -614,7 +613,7 @@ function draw_general_object(l_object,l_div)
 				for(j=0;j<tmp[i].actions.length;j++)
 				{
 					var tmp_attr=tmp[i].actions[j];
-					draw_general_object_button(l_object.actions[tmp_attr],tmp_attr,tmp_group,"general_object_button");
+					draw_general_object_button(l_object.actions[tmp_attr],l_object.code,tmp_group,"general_object_button");
 					l_used_actions.push(tmp_attr);
 				}			
 			}
