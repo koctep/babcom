@@ -355,6 +355,118 @@ function draw_general_object_dialog_params_integer(l_par,l_data_div,l_div,l_num)
 	$(tmp_input).trigger("change");
 }
 
+/*
+l_data=[{"name":"","data":{} }]}
+*/
+function dropdown_list_fill(l_div, l_data)
+{
+	var tmp_div;
+	var i;
+	
+	for(i=0;i<l_data.length;i++)
+	{
+		tmp_div=$("<div class=\"general_object_list_element\">"+l_data.list[i].name+"</div>");
+		$(tmp_div).data("in_data",l_data.list[i].data);
+		$(tmp_div).data("change_val",l_value);
+
+		$(l_div).append(tmp_div);
+		$(tmp_div).click(function (event){ $(event.target).parent().hide(); $(tmp_input).text(l_data.selected.name)});	
+	}		
+}
+
+function dropdown_make(l_div, l_data, l_default)
+{
+	
+	var tmp_dropdown_container=$("<div class=\"general_object_dialog_dropdown_cont\"></div>");
+	var tmp_input=$("<div type=\"text\" class=\"general_object_dialog_dropdown_input\"></div>");
+	var tmp_dropdown=$("<div class=\"general_object_dialog_dropdown\"></div>");
+	
+	if(l_data.selected!==undefined) $(tmp_input).text(l_data.selected.name);
+	
+	$(tmp_dropdown_container).append(tmp_input);
+	$(tmp_dropdown_container).append(tmp_dropdown);
+	$(l_div).append(tmp_dropdown_container);
+
+	dropdown_list_fill(tmp_dropdown,l_data,tmp_input);
+	$(tmp_input).click(function(event){ $(event.target).parent().children().show(); });
+	
+}
+
+
+function draw_general_object_dialog_params_object(l_par,l_data_div,l_div,l_num)
+{
+	var l_data=$(l_data_div).data("data_input");
+	var l_count=$(l_data_div).data("data_count");
+	var l_plus=$(l_div).data("plus_button");
+
+	var tmp_cont=$("<div class=\"general_object_dialog_input_cont_singleline\"></div>");
+
+	//если диалог обязательный, то зеленая точка, если нет, то крестик. 
+	if(l_num<l_par.min_value_count) $(tmp_cont).append("<div class=\"general_object_dialog_input_dot\">●</div>"); 
+	else 
+	{
+		var tmp_del_button=$("<div class=\"general_object_dialog_input_del_button\">×</div>"); 
+		
+		$(tmp_del_button).data("data_input",l_data);
+		$(tmp_del_button).data("user_parameter",l_par);
+		$(tmp_del_button).data("num",l_num);
+		$(tmp_del_button).data("data_count",l_count);		 
+		$(tmp_del_button).data("plus_button",l_plus);		 
+
+		$(tmp_cont).append(tmp_del_button); 
+		$(tmp_del_button).click(function(event){general_object_dialog_input_del_button_callback(event);});
+	}
+	
+	$(tmp_cont).data("data_dropdown",
+	[{"name":"111", "data":{"code":111}},
+	{"name":"222", "data":{"code":222}},
+	{"name":"333", "data":{"code":333}},
+	{"name":"444", "data":{"code":444}}
+	]);
+	dropdown_make(tmp_cont,$(tmp_cont).data("data_dropdown"),0);
+
+/*	
+	//заполняем дефолтные значения
+	var tmp_default;
+	if($.isArray(l_par.default_value)==true)
+	{ 
+		if(l_num<l_par.default_value.length)
+			{
+				tmp_default=l_par.default_value[l_num]; 
+			}
+			else tmp_default=""; 		
+	}	
+	else 
+	{
+		if(l_num==0)
+		{
+			tmp_default=l_par.default_value; 
+		}
+		else tmp_default=""; 
+	}
+	
+	$(tmp_input).data("default",tmp_default);
+	$(tmp_input).val(tmp_default);
+	
+	$(tmp_input).data("data_input",l_data);
+	$(tmp_input).data("user_parameter",l_par);
+	$(tmp_input).data("num",l_num);
+	
+	$(tmp_input).change(function(event)
+	{
+		general_object_dialog_input_integer_callback(event);
+	});	
+*/	
+
+
+	$(l_div).append(tmp_cont);
+//	$(tmp_input).trigger("change");
+
+
+}
+
+
+
 function draw_general_object_dialog_params(l_par,l_par_div)
 {
 	
@@ -380,10 +492,7 @@ function draw_general_object_dialog_params(l_par,l_par_div)
 		if(l_par.type==="integer") draw_general_object_dialog_params_integer(l_par,	l_par_div,tmp_group,i);
 		if(l_par.type==="float") draw_general_object_dialog_params_float(l_par,	l_par_div,tmp_group,i);
 		if(l_par.type==="string") draw_general_object_dialog_params_string(l_par, l_par_div,tmp_group,i);
-	
-/*		if(l_par.type=="string") draw_general_object_dialog_params_string(l_par,tmp_group);
-		if(l_par.type=="object") draw_general_object_dialog_params_object(l_par,tmp_group);
-*/
+		if(l_par.type=="objects") draw_general_object_dialog_params_object(l_par, l_par_div,tmp_group,i);
 	}
 	
 	//кнопочка добавления окошечек параметров. 

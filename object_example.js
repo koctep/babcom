@@ -153,6 +153,16 @@ var tmp_obj={
 								"default_value": 1000,
 								"min_value_count": 1,
 								"max_value_count": 1
+							},
+							{
+								"code": "receivers",
+								"type": "objects",
+								"data": {
+									"object_code": "receivers",
+									"attribute_code": "value"
+								},
+								"description": "Кому",
+								"min_value_count": 1
 							}
 						]
 					},
@@ -220,6 +230,56 @@ var tmp_obj={
 							"actions": ["turn_on","turn_off"]
 						}
 					]
+				}
+			}
+		]
+	}
+}
+
+var tmp_recv=
+{
+	"result": "ok",
+	"data": {
+		"last_modified": "2017-01-11T15:00:00.000Z",
+		"objects": [
+			{
+				"code": "16x68z-14TnZm66F",
+				"attributes": {
+					"name": {
+						"value": "Г'Кар"
+					}
+				}
+			},
+			{
+				"code": "16x68z-17TnZm66F",
+				"attributes": {
+					"name": {
+						"value": "Джон Шеридан"
+					}
+				}
+			},
+			{
+				"code": "16x68z-16TnZm66F",
+				"attributes": {
+					"name": {
+						"value": "Дипломаты Центавра"
+					}
+				}
+			},
+			{
+				"code": "16x68z-18TnZm66F",
+				"attributes": {
+					"name": {
+						"value": "Гости станции Вавилон 5"
+					}
+				}
+			},
+			{
+				"code": "16x68z-15TnZm66F",
+				"attributes": {
+					"name": {
+						"value": "Персонал станции Вавилон 5"
+					}
 				}
 			}
 		]
