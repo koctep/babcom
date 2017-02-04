@@ -17,11 +17,19 @@ function callback_general_object_dialog_params_del(event)
 	var tmp_input=$(event.target).data("data_input");
 	var tmp_button_plus=tmp_input.plus;
 	var tmp_data=tmp_input.value;
-
 	var tmp_data_link=$(event.target).data("data_link");
 
-	var tmp_num=tmp_data.indexOf(tmp_data_link);
-	tmp_data.splice(tmp_num,1);	
+	for(var i=0;i<tmp_data.length;i++)
+	{	
+		if(i==tmp_data_link.num)
+		{
+			tmp_data.splice(i,1);	
+		}
+	}
+	for(i=0;i<tmp_data.length;i++)
+	{	
+		tmp_data[i].num=i;
+	}
 	
 	$(event.target).parent().remove();
 	$(tmp_button_plus).attr("disabled",false);
@@ -34,7 +42,6 @@ function draw_general_object_dialog_params_del(l_div,l_input,l_data)
 	
 	$(tmp_del_button).data("data_input",l_input);
 	$(tmp_del_button).data("data_link",l_data);
-
 	$(l_div).append(tmp_del_button); 
 	$(tmp_del_button).click(function(event){callback_general_object_dialog_params_del(event);});
 
@@ -88,6 +95,9 @@ function draw_general_object_dialog_params_string(l_input)
 	
 	var tmp_cont;
 	var tmp_input;
+	
+	l_input.value[l_num]={"num":l_num, "value": null};
+//	alert("VOT: "+ JSON.stringify(l_input.value[l_num]));	
 	
 	//если мултилайн окно ввода - контейнер широкий, если нет - узкий.  
 	if(l_par.data.multiline==true)
@@ -499,7 +509,7 @@ function draw_general_object_dialog_params(l_par,l_par_div)
 	{
 //		if(l_par.type==="integer") draw_general_object_dialog_params_integer(l_par,	l_par_div,tmp_group,i);
 //		if(l_par.type==="float") draw_general_object_dialog_params_float(l_par,	l_par_div,tmp_group,i);
-		if(l_par.type==="string") draw_general_object_dialog_params_string(tmp_data);
+		if(l_par.type==="string") draw_general_object_dialog_params_string($(l_par_div).data("data_input")[l_par.code]);
 //		if(l_par.type=="objects") draw_general_object_dialog_params_object(l_par, l_par_div,tmp_group,i);
 	}
 	
@@ -530,18 +540,20 @@ function draw_general_object_dialog_params_plus(tmp_input)
 	});
 }
 
-function draw_general_object_ok(l_data,l_action,l_code)
+function draw_general_object_dialog_ok(l_div,l_data,l_action,l_code)
 {
 	//Кнопки подтверждения, отмены.
 	var tmp_button_ok=$("<button class=\"general_object_button_dialog\"> Ok! </button>");
+	$(l_div).append(tmp_button_ok);
+	
 	$(tmp_button_ok).data("action",l_action);
-	$(tmp_button_ok).data("data",tmp_div);
-	$(tmp_button_ok).data("general_object_code",$(l_event.target).data("general_object_code"));
+	$(tmp_button_ok).data("data",l_data);
+	$(tmp_button_ok).data("general_object_code",l_code);
 
 	$(tmp_button_ok).click(function(event)
 	{
 		var tmp_action=$(event.target).data("action");
-		var tmp_div=$(event.target).data("data");
+		var tmp_data=$(event.target).data("data");
 		
 		var tmp_send = {};
 		tmp_send.object_code=$(event.target).data("general_object_code");
@@ -550,36 +562,26 @@ function draw_general_object_ok(l_data,l_action,l_code)
 
 		if("user_params" in tmp_action)
 		{
-			tmp_send.user_params={};
+			tmp_send.user_params={};			
 			
-			var tmp_data=$(tmp_div).data("data_input");	
-			var tmp_count=$(tmp_div).data("data_count");	
-			
-			var i=0,j=0;
-			for(i=0;i<tmp_action.user_params.length;i++)
+			$.each(tmp_data, function(l_key,l_value)
 			{
-				tmp_send.user_params[tmp_action.user_params[i].code]=[];
-				for(j=0;j<tmp_count[tmp_action.user_params[i].code];j++)
-				{				
-					if(tmp_data[tmp_action.user_params[i].code][j]!=null) 
+				tmp_send.user_params[l_key]=[];
+				for(var i=0;i<l_value.value.length;i++)
+				{
+					if(l_value.value[i].value===null)
 					{
-						tmp_send.user_params[tmp_action.user_params[i].code].push(tmp_data[tmp_action.user_params[i].code][j]);
+						return;
 					}
 					else
 					{
-						if(j+1<=tmp_action.user_params[i].min_value_count )
-						{
-							alert("Проверьте введенные данные!");
-							return;								
-						}						
+						tmp_send.user_params[l_key].push(l_value.value[i].value);
 					}
 				}
-			}
-			
+			});			
 		}		
 		alert(JSON.stringify(tmp_send));		
-	});
-	
+	});	
 }	
 
 function draw_general_object_dialog(l_event,l_div)
@@ -587,13 +589,13 @@ function draw_general_object_dialog(l_event,l_div)
 	$(l_div).children().hide();
 	
 	var l_action=$(l_event.target).data("object_actions");
+	var l_code=$(l_event.target).data("general_object_code");
+
 	
 	//Окно ввода, название и предупреждение:
 	var tmp_div=$("<div class=\"general_object_dialog\"></div>");
 	$(tmp_div).css({"top": $(l_div).scrollTop()+20});
 	$(tmp_div).attr("id","dialog");
-
-	
 	$(l_div).append(tmp_div);
 	
 	if ("warning" in l_action) 
@@ -613,28 +615,24 @@ function draw_general_object_dialog(l_event,l_div)
 			draw_general_object_dialog_params(l_action.user_params[i],tmp_div);
 		}
 	}	
-	
 
+	//Ok and Cancel buttons	container
+	var tmp_container=$("<div class=\"general_object_button_dialog_container\"></div>");
+	$(tmp_div).append(tmp_container);
 	
+	//ok button
+	draw_general_object_dialog_ok(tmp_container,$(tmp_div).data("data_input"),l_action,l_code)
+	
+	//cancel button
 	var tmp_button_cancel=$("<button class=\"general_object_button_dialog\"> Cancel! </button>");
 	$(tmp_button_cancel).data("general_div",l_div);
 	$(tmp_button_cancel).data("dialog_div",tmp_div);
-	
 	$(tmp_button_cancel).click(function(event)
 	{
-		var l_div=$(event.target).data("general_div");
-		var tmp_div=$(event.target).data("dialog_div");
-		
-		$(l_div).children().show();
-		$(tmp_div).remove();
+		$($(event.target).data("general_div")).children().show();
+		$($(event.target).data("dialog_div")).remove();
 	});
-	
-	var tmp_container=$("<div class=\"general_object_button_dialog_container\"></div>");
-	
-	$(tmp_container).append(tmp_button_ok);
-	$(tmp_container).append(tmp_button_cancel);
-	$(tmp_div).append(tmp_container);
-	
+	$(tmp_container).append(tmp_button_cancel);	
 }
 
 function draw_general_object_text_attr(l_attr,l_cont,l_style)
