@@ -150,7 +150,7 @@ function draw_general_object_dialog_params_string(l_input)
 	$(tmp_input).val(tmp_default);
 
 	//добавляем данные соответствующие инпуту в основной массив
-	l_input.value[l_num]={"value":tmp_default};
+	l_input.value[l_num].value=tmp_default;
 		
 	//данные для обработки инпута
 	$(tmp_input).data("data_input",l_input);
@@ -167,14 +167,15 @@ function draw_general_object_dialog_params_string(l_input)
 	$(tmp_input).trigger("change");
 }
 
-function general_object_dialog_input_float_callback(event)
+function callback_general_object_dialog_params_float(event)
 {
+	var tmp_event=$(event.target);
 	var tmp=parseFloat($(event.target).val());
-	var tmp_par=$(event.target).data("user_parameter");
-	var tmp_data=$(event.target).data("data_input");
-	var tmp_num=$(event.target).data("num");
-	
-//	alert("length: " + tmp.length + "\nPar: " + JSON.stringify(tmp_par) +"\n Data: " + JSON.stringify(tmp_data) + "\n Num: " +tmp_num );
+
+	var tmp_input=tmp_event.data("data_input");
+	var tmp_default=tmp_event.data("input_default");
+	var tmp_par=tmp_input.user_param;
+	var tmp_data=tmp_event.data("data_link");
 	
 	if(isNaN(tmp)==false)
 	{
@@ -182,18 +183,18 @@ function general_object_dialog_input_float_callback(event)
 		{
 			if(tmp >=tmp_par.data.min_value && tmp <= tmp_par.data.max_value ) 
 			{
-				tmp_data[tmp_par.code][tmp_num]=tmp;
+				tmp_data.value=tmp;
 				$(event.target).css({"border-color":"green"});	
 			}	
 			else
 			{
-				tmp_data[tmp_par.code][tmp_num]=null;
+				tmp_data.value=null;
 				$(event.target).css({"border-color":"red"});	
 			}	
 		}
 		else
 		{
-			tmp_data[tmp_par.code][tmp_num]=tmp;
+			tmp_data.value=tmp;
 			$(event.target).css({"border-color":"green"});	
 		}
 		$(event.target).val(tmp);
@@ -201,37 +202,28 @@ function general_object_dialog_input_float_callback(event)
 	else
 	{
 		//если все стереть, то вернется дефолтное значение
-		tmp=$(event.target).data("default");
+		tmp=tmp_default;
 		$(event.target).css({"border-color":"green"});
 		$(event.target).val(tmp);
 	}
 }
 
-function draw_general_object_dialog_params_float(l_par,l_data_div,l_div,l_num)
+function draw_general_object_dialog_params_float(l_input)
 {
-	var l_data=$(l_data_div).data("data_input");
-	var l_count=$(l_data_div).data("data_count");
-	var l_plus=$(l_div).data("plus_button");
-	
+	var l_data=l_input.value;
+	var l_par=l_input.user_param;
+	var l_num=l_input.value.length;
+	var l_div=l_input.container;
+
 	var tmp_cont=$("<div class=\"general_object_dialog_input_cont_singleline\"></div>");
 	var tmp_input=$("<input type=\"text\" class=\"general_object_dialog_input\"></input>");
-			
+	
+	l_input.value[l_num]={"num":l_num, "value": null};		
 	//если диалог обязательный, то зеленая точка, если нет, то крестик. 
 	if(l_num<l_par.min_value_count) $(tmp_cont).append("<div class=\"general_object_dialog_input_dot\">●</div>"); 
-	else
+	else 
 	{
-		var tmp_del_button=$("<div class=\"general_object_dialog_input_del_button\">×</div>"); 
-		
-		$(tmp_del_button).data("data_input",l_data);
-		$(tmp_del_button).data("user_parameter",l_par);
-		$(tmp_del_button).data("num",l_num); 
-		$(tmp_del_button).data("data_count",l_count);
-		$(tmp_del_button).data("plus_button",l_plus);		 
-
-
-		$(tmp_cont).append(tmp_del_button); 
-			//закрыватель всех окошечек с вводом. 
-		$(tmp_del_button).click(function(event){general_object_dialog_input_del_button_callback(event);});
+		draw_general_object_dialog_params_del(tmp_cont,l_input,l_input.value[l_num]);
 	}
 	
 	//заполняем дефолтные значения
@@ -253,16 +245,19 @@ function draw_general_object_dialog_params_float(l_par,l_data_div,l_div,l_num)
 		else tmp_default=""; 
 	}
 	
-	$(tmp_input).data("default",tmp_default);
 	$(tmp_input).val(tmp_default);
 	
-	$(tmp_input).data("data_input",l_data);
-	$(tmp_input).data("user_parameter",l_par);
-	$(tmp_input).data("num",l_num);
-	
+	//добавляем данные соответствующие инпуту в основной массив
+	l_input.value[l_num].value=tmp_default;
+		
+	//данные для обработки инпута
+	$(tmp_input).data("data_input",l_input);
+	$(tmp_input).data("input_default",tmp_default);
+	$(tmp_input).data("data_link",l_input.value[l_num]);
+									
 	$(tmp_input).change(function(event)
 	{
-		general_object_dialog_input_float_callback(event);
+		callback_general_object_dialog_params_float(event);
 	});	
 	
 	$(tmp_cont).append(tmp_input);
@@ -270,12 +265,15 @@ function draw_general_object_dialog_params_float(l_par,l_data_div,l_div,l_num)
 	$(tmp_input).trigger("change");
 }
 
-function general_object_dialog_input_integer_callback(event)
+function callback_general_object_dialog_params_integer(event)
 {
+	var tmp_event=$(event.target);
 	var tmp=parseInt($(event.target).val());
-	var tmp_par=$(event.target).data("user_parameter");
-	var tmp_data=$(event.target).data("data_input");
-	var tmp_num=$(event.target).data("num");
+
+	var tmp_input=tmp_event.data("data_input");
+	var tmp_default=tmp_event.data("input_default");
+	var tmp_par=tmp_input.user_param;
+	var tmp_data=tmp_event.data("data_link");
 	
 	if(isNaN(tmp)==false)
 	{
@@ -283,18 +281,18 @@ function general_object_dialog_input_integer_callback(event)
 		{
 			if(tmp >=tmp_par.data.min_value && tmp <= tmp_par.data.max_value ) 
 			{
-				tmp_data[tmp_par.code][tmp_num]=tmp;
+				tmp_data.value=tmp;
 				$(event.target).css({"border-color":"green"});	
 			}	
 			else
 			{
-				tmp_data[tmp_par.code][tmp_num]=null;
+				tmp_data.value=null;
 				$(event.target).css({"border-color":"red"});	
 			}	
 		}
 		else
 		{
-			tmp_data[tmp_par.code][tmp_num]=tmp;
+			tmp_data.value=tmp;
 			$(event.target).css({"border-color":"green"});	
 		}
 		$(event.target).val(tmp);
@@ -302,36 +300,28 @@ function general_object_dialog_input_integer_callback(event)
 	else
 	{
 		//если все стереть, то вернется дефолтное значение
-		tmp=$(event.target).data("default");
+		tmp=tmp_default;
 		$(event.target).css({"border-color":"green"});
 		$(event.target).val(tmp);
 	}
 }
 
-function draw_general_object_dialog_params_integer(l_par,l_data_div,l_div,l_num)
+function draw_general_object_dialog_params_integer(l_input)
 {
-	var l_data=$(l_data_div).data("data_input");
-	var l_count=$(l_data_div).data("data_count");
-	var l_plus=$(l_div).data("plus_button");
+	var l_data=l_input.value;
+	var l_par=l_input.user_param;
+	var l_num=l_input.value.length;
+	var l_div=l_input.container;
 
 	var tmp_cont=$("<div class=\"general_object_dialog_input_cont_singleline\"></div>");
 	var tmp_input=$("<input type=\"text\" class=\"general_object_dialog_input\"></input>");
-			
-			
+	
+	l_input.value[l_num]={"num":l_num, "value": null};		
 	//если диалог обязательный, то зеленая точка, если нет, то крестик. 
 	if(l_num<l_par.min_value_count) $(tmp_cont).append("<div class=\"general_object_dialog_input_dot\">●</div>"); 
 	else 
 	{
-		var tmp_del_button=$("<div class=\"general_object_dialog_input_del_button\">×</div>"); 
-		
-		$(tmp_del_button).data("data_input",l_data);
-		$(tmp_del_button).data("user_parameter",l_par);
-		$(tmp_del_button).data("num",l_num);
-		$(tmp_del_button).data("data_count",l_count);		 
-		$(tmp_del_button).data("plus_button",l_plus);		 
-
-		$(tmp_cont).append(tmp_del_button); 
-		$(tmp_del_button).click(function(event){general_object_dialog_input_del_button_callback(event);});
+		draw_general_object_dialog_params_del(tmp_cont,l_input,l_input.value[l_num]);
 	}
 	
 	//заполняем дефолтные значения
@@ -353,16 +343,19 @@ function draw_general_object_dialog_params_integer(l_par,l_data_div,l_div,l_num)
 		else tmp_default=""; 
 	}
 	
-	$(tmp_input).data("default",tmp_default);
 	$(tmp_input).val(tmp_default);
 	
-	$(tmp_input).data("data_input",l_data);
-	$(tmp_input).data("user_parameter",l_par);
-	$(tmp_input).data("num",l_num);
-	
+	//добавляем данные соответствующие инпуту в основной массив
+	l_input.value[l_num].value=tmp_default;
+		
+	//данные для обработки инпута
+	$(tmp_input).data("data_input",l_input);
+	$(tmp_input).data("input_default",tmp_default);
+	$(tmp_input).data("data_link",l_input.value[l_num]);
+									
 	$(tmp_input).change(function(event)
 	{
-		general_object_dialog_input_integer_callback(event);
+		callback_general_object_dialog_params_integer(event);
 	});	
 	
 	$(tmp_cont).append(tmp_input);
@@ -507,8 +500,8 @@ function draw_general_object_dialog_params(l_par,l_par_div)
 	//рисуем окошечки для вводимых параметров
 	for( var i=0;i<l_count;i++)
 	{
-//		if(l_par.type==="integer") draw_general_object_dialog_params_integer(l_par,	l_par_div,tmp_group,i);
-//		if(l_par.type==="float") draw_general_object_dialog_params_float(l_par,	l_par_div,tmp_group,i);
+		if(l_par.type==="integer") draw_general_object_dialog_params_integer($(l_par_div).data("data_input")[l_par.code]);
+		if(l_par.type==="float") draw_general_object_dialog_params_float($(l_par_div).data("data_input")[l_par.code]);
 		if(l_par.type==="string") draw_general_object_dialog_params_string($(l_par_div).data("data_input")[l_par.code]);
 //		if(l_par.type=="objects") draw_general_object_dialog_params_object(l_par, l_par_div,tmp_group,i);
 	}
@@ -533,8 +526,9 @@ function draw_general_object_dialog_params_plus(tmp_input)
 		if(tmp_input.value.length<tmp_input.user_param.max_value_count)
 		{
 			if(tmp_input.value.length+1==tmp_input.user_param.max_value_count) $(event.target).attr("disabled",true);
-//			if(tmp_par.type==="integer") draw_general_object_dialog_params_integer(tmp_par,tmp_data_div,tmp_div,tmp);
-//			if(tmp_par.type==="float") draw_general_object_dialog_params_float(tmp_par,tmp_data_div,tmp_div,tmp);
+			
+			if(tmp_input.type==="integer") draw_general_object_dialog_params_integer(tmp_input);
+			if(tmp_input.type==="float") draw_general_object_dialog_params_float(tmp_input);
 			if(tmp_input.type==="string") draw_general_object_dialog_params_string(tmp_input);
 		}
 	});
@@ -668,7 +662,6 @@ function draw_general_object_button(l_act,l_code,l_cont,l_style)
 		$(l_cont).append(tmp_button);
 	}
 }
-
 
 function draw_general_object(l_object,l_div)
 {
