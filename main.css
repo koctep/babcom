@@ -257,6 +257,7 @@ html,body
 	font-size:14px;
 	font-style: normal;
 	font-weight: normal;
+	z-index:10;
 	
 }
 

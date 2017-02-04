@@ -162,6 +162,7 @@ var tmp_obj={
 									"attribute_code": "value"
 								},
 								"description": "Кому",
+								"default_value": [111,333],
 								"min_value_count": 1
 							}
 						]

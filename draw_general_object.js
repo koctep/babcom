@@ -363,77 +363,94 @@ function draw_general_object_dialog_params_integer(l_input)
 	$(tmp_input).trigger("change");
 }
 
-/*
-l_data=[{"name":"","data":{} }]}
-*/
-function dropdown_list_fill(l_div, l_data)
+function draw_general_object_dialog_params_object_dropdown_list(l_div, l_input_div, l_input, l_data)
 {
 	var tmp_div;
-	var i;
-	
-	for(i=0;i<l_data.length;i++)
+		
+	for(var i=0;i<l_input.length;i++)
 	{
-		tmp_div=$("<div class=\"general_object_list_element\">"+l_data.list[i].name+"</div>");
-		$(tmp_div).data("in_data",l_data.list[i].data);
-		$(tmp_div).data("change_val",l_value);
+		tmp_div=$("<div class=\"general_object_list_element\">"+l_input[i].name+"</div>");
+		$(tmp_div).data("input",l_input[i]);
+		$(tmp_div).data("data",l_data);
+		$(tmp_div).data("input_div",l_input_div);
 
 		$(l_div).append(tmp_div);
-		$(tmp_div).click(function (event){ $(event.target).parent().hide(); $(tmp_input).text(l_data.selected.name)});	
+		$(tmp_div).click(function (event)
+		{ 
+			var tmp_input=$(event.target).data("input");
+			var tmp_data=$(event.target).data("data");
+			var tmp_input_div=$(event.target).data("input_div");
+
+			$(event.target).parent().hide(); 
+			$(tmp_input_div).text(tmp_input.name);
+			$(tmp_input_div).css({"border-color":"green"});	
+
+			tmp_data.value=tmp_input.code;
+			
+		});	
 	}		
 }
 
-function dropdown_make(l_div, l_data, l_default)
+function draw_general_object_dialog_params_object_dropdown(l_div, l_data, l_input, l_default)
 {
-	
 	var tmp_dropdown_container=$("<div class=\"general_object_dialog_dropdown_cont\"></div>");
 	var tmp_input=$("<div type=\"text\" class=\"general_object_dialog_dropdown_input\"></div>");
 	var tmp_dropdown=$("<div class=\"general_object_dialog_dropdown\"></div>");
-	
-	if(l_data.selected!==undefined) $(tmp_input).text(l_data.selected.name);
-	
+
 	$(tmp_dropdown_container).append(tmp_input);
 	$(tmp_dropdown_container).append(tmp_dropdown);
 	$(l_div).append(tmp_dropdown_container);
-
-	dropdown_list_fill(tmp_dropdown,l_data,tmp_input);
+	
 	$(tmp_input).click(function(event){ $(event.target).parent().children().show(); });
 	
+	draw_general_object_dialog_params_object_dropdown_list(tmp_dropdown,tmp_input,l_input,l_data);
+
+	if(l_default!==undefined) 
+	{
+		for(var i=0;i<l_input.length;i++)
+		{
+			if(l_default==l_input[i].code)
+			{
+				$(tmp_input).text(l_input[i].name);
+				l_data.value=l_default;
+				$(tmp_input).css({"border-color":"green"});	
+				break;
+			}
+		}
+	}
+	else
+	{
+		l_data.value=null;
+		$(tmp_input).css({"border-color":"red"});	
+	}
 }
 
-
-function draw_general_object_dialog_params_object(l_par,l_data_div,l_div,l_num)
+function draw_general_object_dialog_params_object(l_input)
 {
-	var l_data=$(l_data_div).data("data_input");
-	var l_count=$(l_data_div).data("data_count");
-	var l_plus=$(l_div).data("plus_button");
+	var l_data=l_input.value;
+	var l_par=l_input.user_param;
+	var l_num=l_data.length;
+	var l_div=l_input.container;
 
 	var tmp_cont=$("<div class=\"general_object_dialog_input_cont_singleline\"></div>");
-
+	$(l_div).append(tmp_cont);
+	
+	l_data[l_num]={"num":l_num, "value": null};
 	//если диалог обязательный, то зеленая точка, если нет, то крестик. 
 	if(l_num<l_par.min_value_count) $(tmp_cont).append("<div class=\"general_object_dialog_input_dot\">●</div>"); 
 	else 
 	{
-		var tmp_del_button=$("<div class=\"general_object_dialog_input_del_button\">×</div>"); 
-		
-		$(tmp_del_button).data("data_input",l_data);
-		$(tmp_del_button).data("user_parameter",l_par);
-		$(tmp_del_button).data("num",l_num);
-		$(tmp_del_button).data("data_count",l_count);		 
-		$(tmp_del_button).data("plus_button",l_plus);		 
-
-		$(tmp_cont).append(tmp_del_button); 
-		$(tmp_del_button).click(function(event){general_object_dialog_input_del_button_callback(event);});
+		draw_general_object_dialog_params_del(tmp_cont,l_input,l_data[l_num]);
 	}
 	
-	$(tmp_cont).data("data_dropdown",
-	[{"name":"111", "data":{"code":111}},
-	{"name":"222", "data":{"code":222}},
-	{"name":"333", "data":{"code":333}},
-	{"name":"444", "data":{"code":444}}
-	]);
-	dropdown_make(tmp_cont,$(tmp_cont).data("data_dropdown"),0);
-
-/*	
+	tmp_data_input=
+	[
+		{"name":"111", "code":111},
+		{"name":"222", "code":222},
+		{"name":"333", "code":333},
+		{"name":"444", "code":444}
+	];
+		
 	//заполняем дефолтные значения
 	var tmp_default;
 	if($.isArray(l_par.default_value)==true)
@@ -442,7 +459,7 @@ function draw_general_object_dialog_params_object(l_par,l_data_div,l_div,l_num)
 			{
 				tmp_default=l_par.default_value[l_num]; 
 			}
-			else tmp_default=""; 		
+			else tmp_default=undefined; 		
 	}	
 	else 
 	{
@@ -450,27 +467,10 @@ function draw_general_object_dialog_params_object(l_par,l_data_div,l_div,l_num)
 		{
 			tmp_default=l_par.default_value; 
 		}
-		else tmp_default=""; 
+		else tmp_default=undefined; 
 	}
 	
-	$(tmp_input).data("default",tmp_default);
-	$(tmp_input).val(tmp_default);
-	
-	$(tmp_input).data("data_input",l_data);
-	$(tmp_input).data("user_parameter",l_par);
-	$(tmp_input).data("num",l_num);
-	
-	$(tmp_input).change(function(event)
-	{
-		general_object_dialog_input_integer_callback(event);
-	});	
-*/	
-
-
-	$(l_div).append(tmp_cont);
-//	$(tmp_input).trigger("change");
-
-
+	draw_general_object_dialog_params_object_dropdown(tmp_cont,l_data[l_num],tmp_data_input,tmp_default);
 }
 
 
@@ -500,10 +500,10 @@ function draw_general_object_dialog_params(l_par,l_par_div)
 	//рисуем окошечки для вводимых параметров
 	for( var i=0;i<l_count;i++)
 	{
-		if(l_par.type==="integer") draw_general_object_dialog_params_integer($(l_par_div).data("data_input")[l_par.code]);
-		if(l_par.type==="float") draw_general_object_dialog_params_float($(l_par_div).data("data_input")[l_par.code]);
-		if(l_par.type==="string") draw_general_object_dialog_params_string($(l_par_div).data("data_input")[l_par.code]);
-//		if(l_par.type=="objects") draw_general_object_dialog_params_object(l_par, l_par_div,tmp_group,i);
+		if(l_par.type==="integer") draw_general_object_dialog_params_integer(tmp_data);
+		if(l_par.type==="float") draw_general_object_dialog_params_float(tmp_data);
+		if(l_par.type==="string") draw_general_object_dialog_params_string(tmp_data);
+		if(l_par.type==="objects") draw_general_object_dialog_params_object(tmp_data);
 	}
 	
 	draw_general_object_dialog_params_plus(tmp_data);	
@@ -523,13 +523,18 @@ function draw_general_object_dialog_params_plus(tmp_input)
 	{
 		var tmp_input=$(event.target).data("data_input");
 
-		if(tmp_input.value.length<tmp_input.user_param.max_value_count)
+		if(tmp_input.user_param.max_value_count===undefined ) tmp_max=100;
+		else tmp_max=tmp_input.user_param.max_value_count;
+		
+		if(tmp_input.value.length<tmp_max)
 		{
 			if(tmp_input.value.length+1==tmp_input.user_param.max_value_count) $(event.target).attr("disabled",true);
 			
 			if(tmp_input.type==="integer") draw_general_object_dialog_params_integer(tmp_input);
 			if(tmp_input.type==="float") draw_general_object_dialog_params_float(tmp_input);
 			if(tmp_input.type==="string") draw_general_object_dialog_params_string(tmp_input);
+			if(tmp_input.type==="objects") draw_general_object_dialog_params_object(tmp_input);
+
 		}
 	});
 }
@@ -557,6 +562,7 @@ function draw_general_object_dialog_ok(l_div,l_data,l_action,l_code)
 		if("user_params" in tmp_action)
 		{
 			tmp_send.user_params={};			
+			var tmp_switch=0;
 			
 			$.each(tmp_data, function(l_key,l_value)
 			{
@@ -565,7 +571,9 @@ function draw_general_object_dialog_ok(l_div,l_data,l_action,l_code)
 				{
 					if(l_value.value[i].value===null)
 					{
-						return;
+						alert("Проверьте вводимые данные!");
+						tmp_switch=1;		
+						return false;
 					}
 					else
 					{
@@ -573,8 +581,8 @@ function draw_general_object_dialog_ok(l_div,l_data,l_action,l_code)
 					}
 				}
 			});			
-		}		
-		alert(JSON.stringify(tmp_send));		
+		}	
+		if(tmp_switch==0) alert(JSON.stringify(tmp_send));		
 	});	
 }	
 
