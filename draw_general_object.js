@@ -595,9 +595,8 @@ function draw_general_object_dialog(l_event,l_div)
 	$(l_div).children().hide();
 	
 	var l_action=$(l_event.target).data("object_actions");
-	var l_code=$(l_event.target).data("general_object_code");
+	var l_code=g_main_object_code;
 
-	
 	//Окно ввода, название и предупреждение:
 	var tmp_div=$("<div class=\"general_object_dialog\"></div>");
 	$(tmp_div).css({"top": $(l_div).scrollTop()+20});
@@ -661,14 +660,12 @@ function draw_general_object_text_attr(l_attr,l_cont,l_style)
 	}
 }
 
-function draw_general_object_button(l_act,l_code,l_cont,l_style)
+function draw_general_object_button(l_act,l_cont,l_style)
 {
 	if("name" in  l_act )
 	{
 		var tmp_button=$("<button class="+ l_style+ ">"+l_act.name+"</button>");
 		$(tmp_button).data("object_actions",l_act);
-		//код объекта от которого будет совершаться действие... 
-		$(tmp_button).data("general_object_code",l_code);
 
 		if(l_act.disabled==true) $(tmp_button).attr("disabled","disabled");  
 		$(l_cont).append(tmp_button);
@@ -720,7 +717,7 @@ function draw_general_object(l_object,l_div)
 				for(j=0;j<tmp[i].actions.length;j++)
 				{
 					var tmp_attr=tmp[i].actions[j];
-					draw_general_object_button(l_object.actions[tmp_attr],l_object.code,tmp_group,"general_object_button");
+					draw_general_object_button(l_object.actions[tmp_attr],tmp_group,"general_object_button");
 					l_used_actions.push(tmp_attr);
 				}			
 			}
@@ -742,7 +739,7 @@ function draw_general_object(l_object,l_div)
 	{
 		if( $.inArray(l_key,l_used_actions) <0)
 		{
-			draw_general_object_button(l_value,l_key,l_div,"general_object_button");
+			draw_general_object_button(l_value,l_div,"general_object_button");
 		}
 
 	});

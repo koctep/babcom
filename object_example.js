@@ -1,3 +1,4 @@
+var g_main_object_code="16x68z-14TnZm66F";
 var g_meta=
 {
 	"data": 
@@ -22,7 +23,49 @@ var g_meta=
 				"name": "Лазер"
 			}
 		],
-		"actions":[]
+		"actions":
+		[
+			{
+				"code": "send_mail",
+				"name": "Написать письмо",
+				"type": "mail.send",
+				"params": {},
+				"user_params": [
+					{
+						"code": "receivers",
+						"type": "objects",
+						"data": {
+							"object_code": "receivers",
+							"attribute_code": "value"
+						},
+						"description": "Кому",
+						"min_value_count": 1
+					},
+					{
+						"code": "title",
+						"type": "string",
+						"data": {
+							"max_length": "100",
+							"min_length": "10"
+						},
+						"description": "Тема",
+						"min_value_count": 1,
+						"max_value_count": 1
+					},
+					{
+						"code": "body",
+						"type": "string",
+						"data": {
+							"min_length": "1",
+							"multiline": true
+						},
+						"description": "Сообщение",
+						"min_value_count": 1,
+						"max_value_count": 1
+					}
+				]
+			}
+		]
 	}
 }
 
