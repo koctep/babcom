@@ -11,42 +11,28 @@
 
 <!--		<button id="btn">Обновить данные!</button> -->
 		
-	<div id="main_div">
-		<div id="buttons_div"> 
-			<img src="hyperdrive.png" alt="" class="mybutton" id="hyperdrive" >
-			<p class="btntxt">Гипер. привод</p>
-			<img src="jet.png" alt="" class="mybutton" id="mainjet1" >
-			<p class="btntxt">Двигатель 1</p>
-			<img src="jet.png" alt="" class="mybutton" id="mainjet2" >
-			<p class="btntxt">Двигатель 2</p>
-			<img src="hypertransm.png" alt="" class="mybutton" id="hypertransm1">
-			<p class="btntxt">Тахионный передатчик 1</p>
-			<img src="hypertransm.png" alt="" class="mybutton" id="hypertransm2">
-			<p class="btntxt">Тахионный передатчик 2</p>
+		<div id="main_div">
+			<div id="buttons_div"></div>
+			<div id="objects_div">
+				<p class="general_object_name">Выберите объект для работы!</p>
+			
+			</div>	
 		</div>
-
-		<div id="objects_div"> 
-		
-		</div>	
-		
-
-				
+						
 		<script src="jquery.min.js"></script>
-		
+			
 		<script src="object_example.js"></script> 
 		<script src="draw_general_object.js"></script> 
-		
-		<script>
+		<script src="draw_meta_object.js"></script> 
 			
+		<script>
 			resizeMainDivs();
 			$(window).resize(resizeMainDivs);
-					
-			draw_general_object(tmp_obj.data.objects[0],$("#objects_div"));
 
-		//test!
+//			draw_general_object(g_obj[0],objects_div);
+			draw_meta_object(buttons_div, objects_div, g_meta.data.objects);	
+	
 		</script>
 
 	</body>
-
-
 </html>

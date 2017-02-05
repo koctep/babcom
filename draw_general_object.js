@@ -124,22 +124,26 @@ function draw_general_object_dialog_params_string(l_input)
 
 	//заполняем дефолтные значения
 	var tmp_default;
-	if($.isArray(l_par.default_value)==true)
+	if(l_par.default_value !== undefined)
 	{ 
-		if(l_num<l_par.default_value.length)
+		if($.isArray(l_par.default_value)==true)
+		{ 
+			if(l_num<l_par.default_value.length)
+			{
+				tmp_default=l_par.default_value[l_num]; 
+			}
+			else tmp_default=""; 		
+		}	
+		else 
 		{
-			tmp_default=l_par.default_value[l_num]; 
+			if(l_num==0)
+			{
+				tmp_default=l_par.default_value; 
+			}
+			else tmp_default=""; 
 		}
-		else tmp_default=""; 		
-	}	
-	else 
-	{
-		if(l_num==0)
-		{
-			tmp_default=l_par.default_value; 
-		}
-		else tmp_default=""; 
 	}
+	else tmp_default="";
 	
 	//максимальная длина вводимой строки. 	
 	if(l_par.data.max_length != undefined ) 
