@@ -3,6 +3,9 @@
 function draw_meta_object(l_div, l_callback_div, l_meta_obj)
 {
 	var tmp_div;
+	
+	var tmp_white="rgba(200,200,200,0.4)";
+	var tmp_green="rgba(0,200,0,0.5)";
 		
 	if("objects" in l_meta_obj)
 	{
@@ -22,18 +25,17 @@ function draw_meta_object(l_div, l_callback_div, l_meta_obj)
 				var tmp_type=$(event.target).data("type");
 				var tmp_callback_div=$(event.target).data("input_div");
 	
-				$(".meta_object_list_element").css({"background-color":"rgb(200,200,200)"});	
+				$(".meta_object_list_element").css({"background-color":tmp_white});	
 				
 				var tmp_obj=find_object(g_obj,tmp_code);		
 				if(tmp_obj!==undefined)
 				{			
 					draw_general_object(tmp_obj,tmp_callback_div);
-					$(event.target).css({"background-color":"rgb(100,255,100)"});	
+					$(event.target).css({"background-color":tmp_green});	
 				}
 			});
 	 	}		
 	}
-	
 
 	if("actions" in l_meta_obj)
 	{
@@ -53,11 +55,30 @@ function draw_meta_object(l_div, l_callback_div, l_meta_obj)
 				var tmp_type=$(event.target).data("type");
 				var tmp_callback_div=$(event.target).data("input_div");
 	
-				$(".meta_object_list_element").css({"background-color":"rgb(200,200,200)"});	
-				$(event.target).css({"background-color":"rgb(100,255,100)"});	
+				$(".meta_object_list_element").css({"background-color": tmp_white });	
+				$(event.target).css({"background-color": tmp_green });	
 				
 				draw_general_object_dialog(event,tmp_callback_div);
 				
+			});
+	 	}		
+	}
+
+	if("special" in l_meta_obj)
+	{
+		if("mail" in l_meta_obj.special)
+		{
+			tmp_div=$("<div class=\"meta_object_list_element\">Почта</div>");
+			$(tmp_div).data("input_div",l_callback_div);
+			$(l_div).append(tmp_div);
+			$(tmp_div).click(function (event)
+			{ 
+				var tmp_callback_div=$(event.target).data("input_div");
+	
+				$(".meta_object_list_element").css({"background-color":tmp_white});	
+				$(event.target).css({"background-color":tmp_green});	
+				
+				draw_mail(tmp_callback_div);
 			});
 	 	}		
 	}
