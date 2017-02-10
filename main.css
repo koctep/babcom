@@ -43,6 +43,24 @@ html,body
 	font-size:15px;
 }
 
+#user_div
+{	
+	position:relative;
+	margin:0px;
+	height: 6%;
+	width:100%;
+	display: block;
+}
+
+#meta_div
+{	
+	position:relative;
+	display: block;
+	margin:0px;
+	padding:0px; 
+	width:100%;
+}
+
 /*drowing general object*/
 .general_object_name
 {
@@ -66,7 +84,6 @@ html,body
 	font-weight: bold;
 	font-style: italic;  
 }
-
 
 .general_object_dialog_warning
 {
@@ -245,7 +262,6 @@ html,body
 	padding:0px;
 }
 
-
 /* Dropdown Content (Hidden by Default) */
 .general_object_dialog_dropdown {
     display: none;
@@ -305,7 +321,7 @@ html,body
 	background-color:rgba(200,200,200,0.4);
 	font-family: sans;
 	margin: 3px auto;
-	z-index: 10;
+
 }
 
 /**/
@@ -436,4 +452,57 @@ html,body
 	border: 3px solid white;
 	border-radius: 5px; 
 	background-color: rgba(255,255,255,0.5);
+}
+
+/* The container <div> - needed to position the dropdown content */
+.user_object_dropdown_cont 
+{
+   	position: relative;
+	width:85%;height:20px;
+	margin: 0px auto;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.user_object_dropdown {
+    display: none;
+    position: relative;
+    background-color: #f9f9f9;
+    min-width: 100%;
+    color: black;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	font-family: sans;
+	font-size:14px;
+	font-style: normal;
+	font-weight: normal;
+	z-index:10;
+	
+}
+
+.user_object_dropdown_input
+{	
+	position: relative;
+	width:95%;height:95%;
+	font-size:15px;
+	font-style: normal;
+	font-weight: bold;
+	padding:4px 0px 0px 0px;
+	color:black;
+	background-color:white;
+	font-family: sans;
+	border: 3px solid red;
+	text-align: center;
+
+}
+
+.user_object_name
+{	
+	position: relative;
+	width:95%;height:20px;
+	text-align: center;
+	font-size:15px;
+	font-style: normal;
+	font-weight: bold;
+	color:white;
+	font-family: sans;
+	margin: 3px auto;
 }

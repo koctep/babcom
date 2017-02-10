@@ -12,7 +12,10 @@
 <!--		<button id="btn">Обновить данные!</button> -->
 		
 		<div id="main_div">
-			<div id="buttons_div"></div>
+			<div id="buttons_div">
+				<div id="user_div"></div>	
+				<div id="meta_div"></div>	
+			</div>
 			<div id="objects_div">
 				<p class="general_object_name">Выберите объект для работы!</p>
 			
@@ -20,18 +23,23 @@
 		</div>
 						
 		<script src="jquery.min.js"></script>
+		<script src="uuid/uuid@latest"></script>
 			
 		<script src="object_example.js"></script> 
 		<script src="draw_general_object.js"></script> 
 		<script src="draw_meta_object.js"></script> 
 		<script src="draw_mail.js"></script> 
+		<script src="network.js"></script> 
+		<script src="users.js"></script> 
 			
 		<script>
 			resizeMainDivs();
 			$(window).resize(resizeMainDivs);
 
+			draw_user_objects("#user_div");
+
 //			draw_general_object(g_obj[0],objects_div);
-			draw_meta_object(buttons_div, objects_div, g_meta.data);	
+			draw_meta_object("#meta_div", "#objects_div", g_meta.data);	
 	
 		</script>
 
