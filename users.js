@@ -2,33 +2,63 @@
 
 function draw_user_objects(l_div)
 {
-	$(l_div).empty();
-	$(l_div).append("<p class=\"user_object_name\">Ваше имя</p>");
-		
-	var tmp_dropdown_container=$("<div class=\"user_object_dropdown_cont\"></div>");
-	var tmp_input=$("<div type=\"text\" class=\"user_object_dropdown_input\"></div>");
-	var tmp_dropdown=$("<div class=\"user_object_dropdown\"></div>");
-
-	$(tmp_dropdown_container).append(tmp_input);
-	$(tmp_dropdown_container).append(tmp_dropdown);
-	$(l_div).append(tmp_dropdown_container);
+	var l_reply=net_get_user_objects();
 	
-	$(tmp_input).click(function(event){ $(event.target).parent().children().show(); });
-	
-	if(net_get_user_objects()===true)
+	if(l_reply!==null)
 	{ 
 		var tmp_data=[];
-		alert(JSON.stringify(g_user));
-		for(var i=0;i<g_user.array.length;i++)
+		var tmp_user_switch=0;
+
+		if(JSON.stringify(g_user.array)!==JSON.stringify(l_reply))
 		{
-			var tmp_value;
-			if("value_description" in g_user.array[i].attributes.name) tmp_value=g_user.array[i].attributes.name.value_description;
-			else tmp_value=g_user.array[i].attributes.name.value;
+			g_user.array=l_reply;					
+
+			$(l_div).empty();
+			$(l_div).append("<p class=\"user_object_name\">Ваше имя</p>");
+				
+			var tmp_dropdown_container=$("<div class=\"user_object_dropdown_cont\"></div>");
+			var tmp_input=$("<div type=\"text\" class=\"user_object_dropdown_input\"></div>");
+			var tmp_dropdown=$("<div class=\"user_object_dropdown\"></div>");
+		
+			$(tmp_dropdown_container).append(tmp_input);
+			$(tmp_dropdown_container).append(tmp_dropdown);
+			$(l_div).append(tmp_dropdown_container);
+			
+			$(tmp_input).click(function(event){ $(event.target).parent().children().show(); });
+
+			for(var i=0;i<g_user.array.length;i++)
+			{
+				var tmp_value;
+				if("value_description" in g_user.array[i].attributes.name) tmp_value=g_user.array[i].attributes.name.value_description;
+				else tmp_value=g_user.array[i].attributes.name.value;
 					
-			tmp_data.push({"code" : g_user.array[i].code, "name" : tmp_value });	
+				tmp_data.push({"code" : g_user.array[i].code, "name" : tmp_value });	
+			
+				if(g_user.array[i].code==g_user.code)
+				{ 
+					tmp_user_switch=1;
+					g_user.num==i;
+				}
+			}
+			draw_user_objects_list(tmp_dropdown, tmp_input, tmp_data, g_user);	
+			
+			if(tmp_user_switch!=1)
+			{
+				g_user.num=null;
+				g_user.code=null;
+			    g_user.meta=null;	
+				$(tmp_input).text("");
+				$(tmp_input).css({"border-color":"red"});
+				
+				$("#objects_div").empty();
+			    $("#objects_div").append("<p class=\"general_object_name\"><-- Выберите своего персонажа!</p>");	
+				return false;
+			}
 		}
-		draw_user_objects_list(tmp_dropdown, tmp_input, tmp_data, g_user);
-	}	
+		return draw_meta_objects("#meta_div","#objects_div");	
+	}
+	else location.reload();	
+	
 }
 
 function draw_user_objects_list(l_div, l_input_div, l_input, l_data)
@@ -58,7 +88,13 @@ function draw_user_objects_list(l_div, l_input_div, l_input, l_data)
 			tmp_data.code=tmp_input.code;
 			tmp_data.num=tmp_num ;
 			
-			alert(JSON.stringify(g_user));
+			draw_user_objects("#user_div");
+			
+			setInterval(check_notifications,5000);
+			
+			
+			
+//			alert(JSON.stringify(g_user));
 			
 		});	
 	}		

@@ -595,7 +595,7 @@ function draw_general_object_dialog(l_event,l_div)
 	$(l_div).children().hide();
 	
 	var l_action=$(l_event.target).data("object_actions");
-	var l_code=g_main_object_code;
+	var l_code=g_user.code;
 
 	//Окно ввода, название и предупреждение:
 	var tmp_div=$("<div class=\"general_object_dialog\"></div>");
@@ -675,6 +675,8 @@ function draw_general_object_button(l_act,l_cont,l_style)
 function draw_general_object(l_object,l_div)
 {
 	$(l_div).empty();
+	
+//	alert("Object: "+ JSON.stringify(l_object));
 	
 	var lx=$(l_div).width(),ly=$(l_div).height();
 	

@@ -17,7 +17,6 @@
 				<div id="meta_div"></div>	
 			</div>
 			<div id="objects_div">
-				<p class="general_object_name">Выберите объект для работы!</p>
 			
 			</div>	
 		</div>
@@ -31,15 +30,19 @@
 		<script src="draw_mail.js"></script> 
 		<script src="network.js"></script> 
 		<script src="users.js"></script> 
+		<script src="notifications.js"></script> 
 			
 		<script>
 			resizeMainDivs();
 			$(window).resize(resizeMainDivs);
 
+			g_server.uuid=make_uuid();
 			draw_user_objects("#user_div");
 
 //			draw_general_object(g_obj[0],objects_div);
 			draw_meta_object("#meta_div", "#objects_div", g_meta.data);	
+			
+
 	
 		</script>
 
