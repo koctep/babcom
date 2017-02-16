@@ -57,8 +57,8 @@ function net_get_user_objects()
 {
 
 	var l_send={
-//		"client":g_server.uuid,
-		"client":"client51",
+		"client":g_server.uuid,
+//		"client":"client51",
 		"function":"get_user_objects",
 		"params":{}
 	};	
@@ -78,8 +78,8 @@ function net_get_user_objects()
 function net_get_meta_objects()
 {
 	var l_send={  
-//		"client":g_server.uuid,
-		"client":"client51",
+		"client":g_server.uuid,
+//		"client":"client51",
 			"function": "get_objects",
 			"params": 
 				{    
@@ -104,8 +104,8 @@ function net_get_meta_objects()
 function net_get_notifications_objects()
 {
 	var l_send={  
-//		"client":g_server.uuid,
-		"client":"client51",
+		"client":g_server.uuid,
+//		"client":"client51",
 			"function": "get_objects",
 			"params": 
 				{    
@@ -130,8 +130,8 @@ function net_get_notifications_objects()
 function net_get_objects(l_list)
 {
 	var l_send={  
-//		"client":g_server.uuid,
-		"client":"client51",
+		"client":g_server.uuid,
+//		"client":"client51",
 			"function": "get_objects",
 			"params": 
 				{    
@@ -152,4 +152,25 @@ function net_get_objects(l_list)
 		else location.reload();
 }
 
+function net_make_action(l_data)
+{
+	var l_send={  
+		"client":g_server.uuid,
+//		"client":"client51",
+			"function": "make_action",
+			"params": l_data
+ 
+			};	
+		alert("MAKE_ACTION: "+ JSON.stringify(l_send));
+		net_send(l_send);
+		
+		var l_reply;
+		if(g_server.reply!==null)
+		{
+			l_reply=JSON.parse(JSON.stringify(g_server.reply.data));
+			g_server.reply=null;
+			return l_reply;	
+		}
+		else location.reload();
+}
 

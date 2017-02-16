@@ -586,7 +586,19 @@ function draw_general_object_dialog_ok(l_div,l_data,l_action,l_code)
 				}
 			});			
 		}	
-		if(tmp_switch==0) alert(JSON.stringify(tmp_send));		
+		if(tmp_switch==0) 
+		{
+			var l_reply=net_make_action(tmp_send);
+			if(draw_user_objects()===true)
+			{
+				if(l_reply===null) draw_general_object(g_user.array[g_user.num]);
+				else
+				{
+					draw_general_object(l_reply);
+				}
+			}
+		}	
+	
 	});	
 }	
 
@@ -753,4 +765,5 @@ function draw_general_object(l_object,l_div)
 	});	
 	
 } 
+
 

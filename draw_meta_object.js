@@ -16,7 +16,6 @@ function draw_meta_objects(l_div, l_callback_div)
 			$(l_callback_div).empty();
 			$(l_callback_div).append("<p class=\"general_object_name\"><-- Выберите пункт меню!</p>");
 			
-			
 			for(var i=0;i<l_reply.length;i++)
 			{	
 				draw_meta_object("#meta_div","#objects_div",l_reply[i]);
