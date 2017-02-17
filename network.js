@@ -1,7 +1,7 @@
 //запросы к серверу
 
 
-var g_loginserv="http://localhost:8000";
+var g_loginserv="http://127.0.0.1:8000";
 
 var g_user={"array":[], "code": null, "num": null, "meta":null, "notes": null};
 
