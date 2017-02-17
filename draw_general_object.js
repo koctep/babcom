@@ -682,7 +682,7 @@ function draw_general_object_text_attr(l_attr,l_cont,l_style)
 		
 		if("name" in  l_attr )
 		{
-			$(l_cont).append("<p class=" + l_style + "><b>"+l_attr.name+"</b> : " +tmp_val +" </p>");
+			$(l_cont).append("<p class=" + l_style + "><b>"+l_attr.name+"</b> : <br>" +tmp_val +" </p>");
 		}
 		else
 		{
@@ -787,8 +787,7 @@ function draw_general_object(l_object,l_div)
 } 
 
 function callback_links()
-{
-	
+{	
 	$('a').click(function(event)
 	{
 		// Remember the link href
@@ -796,17 +795,13 @@ function callback_links()
 		// Don't follow the link
 		event.preventDefault();		
 		
-//		alert("LINK: " + l_href);
-		
 		if(l_href.search("babcom:")===0)
 		{
-
-			
 			var l_obj=[];
 			l_obj[0]=l_href.substring(7);			
 			var l_list=net_get_objects(l_obj);
 			
-			prompt("LINK: ",JSON.stringify(l_list));
+//			prompt("LINK: ",JSON.stringify(l_list));
 			draw_general_object(l_list[0],"#objects_div");
 			return false;					
 		} 	
