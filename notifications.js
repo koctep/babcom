@@ -1,3 +1,5 @@
+var g_notes_interval;
+
 function check_notifications()
 {
 	var l_reply=net_get_notifications_objects();

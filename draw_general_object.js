@@ -559,7 +559,7 @@ function draw_general_object_dialog_ok(l_div,l_data,l_action,l_code)
 		var tmp_data=$(event.target).data("data");
 		
 		var tmp_send = {};
-		tmp_send.object_code=$(event.target).data("general_object_code");
+		tmp_send.user_object_code=$(event.target).data("general_object_code");
 		tmp_send.action_code=tmp_action.code;
 		tmp_send.params=tmp_action.params;
 
@@ -570,32 +570,49 @@ function draw_general_object_dialog_ok(l_div,l_data,l_action,l_code)
 			
 			$.each(tmp_data, function(l_key,l_value)
 			{
-				tmp_send.user_params[l_key]=[];
-				for(var i=0;i<l_value.value.length;i++)
+				if(l_value.value.length>1)
 				{
-					if(l_value.value[i].value===null)
+					tmp_send.user_params[l_key]=[];
+					for(var i=0;i<l_value.value.length;i++)
+					{
+						if(l_value.value[i].value===null)
+						{
+							alert("Проверьте вводимые данные!");
+							tmp_switch=1;		
+							return false;
+						}
+						else
+						{
+							tmp_send.user_params[l_key].push(l_value.value[i].value);
+						}
+					}
+				}
+				else
+				if(l_value.value.length==1)
+				{
+					if(l_value.value[0].value===null)
 					{
 						alert("Проверьте вводимые данные!");
 						tmp_switch=1;		
 						return false;
 					}
-					else
-					{
-						tmp_send.user_params[l_key].push(l_value.value[i].value);
-					}
-				}
+					tmp_send.user_params[l_key]=l_value.value[0].value;
+				}				
 			});			
 		}	
 		if(tmp_switch==0) 
 		{
 			var l_reply=net_make_action(tmp_send);
-			if(draw_user_objects()===true)
+			
+
+			if(draw_user_objects("#user_div")===true)
 			{
-				if(l_reply===null) draw_general_object(g_user.array[g_user.num]);
+				if(l_reply===null) draw_general_object(g_user.array[g_user.num],"#objects_div");
 				else
 				{
-					draw_general_object(l_reply);
+					draw_general_object(l_reply,"#objects_div");
 				}
+
 			}
 		}	
 	
@@ -650,6 +667,8 @@ function draw_general_object_dialog(l_event,l_div)
 		$($(event.target).data("dialog_div")).remove();
 	});
 	$(tmp_container).append(tmp_button_cancel);	
+	
+	callback_links();
 }
 
 function draw_general_object_text_attr(l_attr,l_cont,l_style)
@@ -764,6 +783,36 @@ function draw_general_object(l_object,l_div)
 		draw_general_object_dialog(event, $("#objects_div"));
 	});	
 	
+	callback_links();
 } 
 
+function callback_links()
+{
+	
+	$('a').click(function(event)
+	{
+		// Remember the link href
+		var l_href = event.target.href;
+		// Don't follow the link
+		event.preventDefault();		
+		
+//		alert("LINK: " + l_href);
+		
+		if(l_href.search("babcom:")===0)
+		{
 
+			
+			var l_obj=[];
+			l_obj[0]=l_href.substring(7);			
+			var l_list=net_get_objects(l_obj);
+			
+			prompt("LINK: ",JSON.stringify(l_list));
+			draw_general_object(l_list[0],"#objects_div");
+			return false;					
+		} 	
+		window.location=l_href;
+	
+	});	
+
+	
+}

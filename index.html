@@ -43,25 +43,7 @@
 //			draw_meta_object("#meta_div", "#objects_div", g_meta.data);	
 			
 			
-			$('a').click(function(event)
-			{
-				// Remember the link href
-				var l_href = event.target.href;
-				// Don't follow the link
-				event.preventDefault();		
-				
-				if(l_href.search("babcom:")===0)
-				{
-					var l_obj=[];
-					l_obj[0]=l_href.substring(7);			
-					var l_list=net_get_objects(l_obj);
-					
-					if(l_reply!=undefined) draw_general_object("#objects_div",l_list);
-					return false;					
-				} 	
-				window.location=l_href;
-			
-			});
+
 		</script>
 
 	</body>

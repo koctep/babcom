@@ -1,4 +1,4 @@
-// все для работы с основными пользователями
+// все для работы с основными пользователям
 
 function draw_user_objects(l_div)
 {
@@ -46,12 +46,30 @@ function draw_user_objects(l_div)
 			{
 				g_user.num=null;
 				g_user.code=null;
-			    g_user.meta=null;	
+			    g_user.meta=null;
+			    g_user.notes=null;	
+				clearInterval(g_notes_interval);
+				
 				$(tmp_input).text("");
 				$(tmp_input).css({"border-color":"red"});
 				
 				$("#objects_div").empty();
-			    $("#objects_div").append("<p class=\"general_object_name\"><-- Выберите своего персонажа!</p>");	
+			    $("#objects_div").append("<p class=\"general_object_name\"><-- Выберите своего персонажа!</p>");
+
+				$("#meta_div").empty();
+				
+				if(g_user.array.length===1)
+				{
+					if("value_description" in g_user.array[0].attributes.name) tmp_value=g_user.array[0].attributes.name.value_description;
+					else tmp_value=g_user.array[0].attributes.name.value;
+					$(tmp_input).text(tmp_value);
+					$(tmp_input).css({"border-color":"green"});	
+					g_user.code=g_user.array[0].code;
+					g_user.num=0;
+					draw_meta_objects("#meta_div","#objects_div");
+					g_notes_interval=setInterval(check_notifications,5000);	
+					
+				}						    	
 				return false;
 			}
 		}
@@ -86,13 +104,14 @@ function draw_user_objects_list(l_div, l_input_div, l_input, l_data)
 			$(tmp_input_div).css({"border-color":"green"});	
 
 			tmp_data.code=tmp_input.code;
-			tmp_data.num=tmp_num ;
+			tmp_data.num=tmp_num;
+			tmp_data.notes=null;
+			tmp_data.meta=null;
 			
 			draw_user_objects("#user_div");
 			
-			setInterval(check_notifications,5000);
-			
-			
+			clearInterval(g_notes_interval);
+			g_notes_interval=setInterval(check_notifications,5000);			
 			
 //			alert(JSON.stringify(g_user));
 			

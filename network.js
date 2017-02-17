@@ -161,7 +161,7 @@ function net_make_action(l_data)
 			"params": l_data
  
 			};	
-		alert("MAKE_ACTION: "+ JSON.stringify(l_send));
+//		prompt("MAKE_ACTION: ",JSON.stringify(l_send));
 		net_send(l_send);
 		
 		var l_reply;
